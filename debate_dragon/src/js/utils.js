@@ -8,11 +8,11 @@ async function textOverlay(text) {
     try {
         if (text.length <= 13) {
             // use bigger font
-            font = await Jimp.loadFont("media/font/source_sans/converted/75px.ttf.fnt");
+            font = await Jimp.loadFont("media/font/source_sans/75px.ttf.fnt");
         }
         // use a smaller font
         else {
-            font = await Jimp.loadFont("media/font/source_sans/converted/60px.ttf.fnt");
+            font = await Jimp.loadFont("media/font/source_sans/60px.ttf.fnt");
         }
     }
     catch (error) {
