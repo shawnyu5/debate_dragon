@@ -13,7 +13,7 @@ client.on("ready", () => {
 
 // command: $dd
 client.on("messageCreate", async (message: typeof Message) => {
-  let command = "$c";
+  let command = "$dd";
   let content = message.content;
   //
   // make sure the bot didn't send the message. And the message starts with command
