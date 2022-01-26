@@ -6,7 +6,18 @@ async function textOverlay(text: string): Promise<any> {
   // Defining the text font
   let font: any = "";
   try {
-    font = await Jimp.loadFont("media/font/yacimient/converted/ssLtj6g5PblzARBxCQyvwIxs.ttf.fnt");
+    if (text.length <= 13) {
+      // use bigger font
+      font = await Jimp.loadFont(
+        "media/font/source_sans/converted/75px.ttf.fnt"
+      );
+    }
+    // use a smaller font
+    else {
+      font = await Jimp.loadFont(
+        "media/font/source_sans/converted/60px.ttf.fnt"
+      );
+    }
   } catch (error) {
     console.log(error);
   }
@@ -14,11 +25,11 @@ async function textOverlay(text: string): Promise<any> {
   image.print(
     font, //font
     70, // x
-    512, // y
+    483, // y
     {
       text: text,
       alignmentX: Jimp.HORIZONTAL_ALIGN_CENTER,
-      alignmentY: Jimp.VERTICAL_ALIGN_MIDDLE
+      alignmentY: Jimp.VERTICAL_ALIGN_MIDDLE,
     },
     300, // max width
     200 // max height
