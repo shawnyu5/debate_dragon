@@ -8,15 +8,11 @@ async function textOverlay(text: string): Promise<any> {
   try {
     if (text.length <= 13) {
       // use bigger font
-      font = await Jimp.loadFont(
-        "media/font/source_sans/75px.ttf.fnt"
-      );
+      font = await Jimp.loadFont("media/font/source_sans/75px.ttf.fnt");
     }
     // use a smaller font
     else {
-      font = await Jimp.loadFont(
-        "media/font/source_sans/60px.ttf.fnt"
-      );
+      font = await Jimp.loadFont("media/font/source_sans/60px.ttf.fnt");
     }
   } catch (error) {
     console.log(error);

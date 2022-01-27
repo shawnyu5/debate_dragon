@@ -13,7 +13,6 @@ client.on("ready", () => {
 client.on("messageCreate", async (message) => {
     let command = "$dd";
     let content = message.content;
-    console.log(content);
     // make sure the bot didn't send the message. And the message starts with command
     if (message.author.bot || !content.startsWith(command))
         return;
