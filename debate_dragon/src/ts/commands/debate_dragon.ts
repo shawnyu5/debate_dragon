@@ -8,7 +8,7 @@ module.exports = {
       .setName("dd")
       .setDescription("Summons a dragon to burn your debate fows to the ground")
       .addStringOption((option: any) =>
-         option.setName("keyword").setDescription("A string").setRequired(true)
+         option.setName("message").setDescription("A string").setRequired(true)
       ),
 
    async execute(interaction: any) {

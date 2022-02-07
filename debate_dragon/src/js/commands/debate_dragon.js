@@ -6,7 +6,7 @@ module.exports = {
     data: new SlashCommandBuilder()
         .setName("dd")
         .setDescription("Summons a dragon to burn your debate fows to the ground")
-        .addStringOption((option) => option.setName("keyword").setDescription("A string").setRequired(true)),
+        .addStringOption((option) => option.setName("message").setDescription("A string").setRequired(true)),
     async execute(interaction) {
         let userMessage = interaction.options._hoistedOptions[0].value;
         console.log("execute userMessage: %s", userMessage); // __AUTO_GENERATED_PRINT_VAR__
