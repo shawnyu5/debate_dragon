@@ -3,7 +3,8 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const discord_js_1 = require("discord.js");
 require("dotenv").config();
 const fs = require("fs");
-require("./deploy-commands");
+const deploy_commands = require("./deploy-commands");
+const config = require("../../config.json");
 const client = new discord_js_1.Client({
     intents: [discord_js_1.Intents.FLAGS.GUILDS, discord_js_1.Intents.FLAGS.GUILD_MESSAGES],
 });
@@ -18,8 +19,11 @@ for (const file of commandFiles) {
     client.commands.set(command.data.name, command);
 }
 client.on("ready", () => {
-    // @ts-ignore
+    let allCommands = deploy_commands.getAllCommands();
     console.log(`${client.user.tag} logged in`);
+    client.guilds.cache.forEach((guild) => {
+        deploy_commands.registerCommands(config.clientID, guild.id, allCommands);
+    });
 });
 client.on("interactionCreate", async (interaction) => {
     if (!interaction.isCommand())
@@ -37,6 +41,10 @@ client.on("interactionCreate", async (interaction) => {
             ephemeral: true,
         });
     }
+});
+client.on("guildCreate", function (guild) {
+    let allCommands = deploy_commands.getAllCommands();
+    deploy_commands.registerCommands(config.clientID, guild.id, allCommands);
 });
 // console.log(require("../../config.json").token);
 client.login(require("../../config.json").token);
