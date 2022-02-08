@@ -22,7 +22,7 @@ for (const file of commandFiles) {
 }
 
 client.on("ready", () => {
-   let allCommands = deploy_commands.getAllCommands();
+   let allCommands = deploy_commands.readAllCommands();
 
    console.log(`${client.user.tag} logged in`);
    client.guilds.cache.forEach((guild) => {
@@ -48,7 +48,7 @@ client.on("interactionCreate", async (interaction) => {
 });
 
 client.on("guildCreate", function (guild) {
-   let allCommands = deploy_commands.getAllCommands();
+   let allCommands = deploy_commands.readAllCommands();
    deploy_commands.registerCommands(config.clientID, guild.id, allCommands);
 });
 

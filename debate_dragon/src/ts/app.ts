@@ -18,7 +18,6 @@ client.on("messageCreate", async (message: typeof Message) => {
    // make sure the bot didn't send the message. And the message starts with command
    if (message.author.bot || !content.startsWith(command)) return;
 
-   // console.log(content);
    content = utils.removeCommand(command, content);
 
    await utils.textOverlay(content);

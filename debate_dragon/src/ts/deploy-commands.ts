@@ -18,9 +18,8 @@ function readAllCommands() {
 
 let commands = readAllCommands();
 
-const rest = new REST({ version: "9" }).setToken(token);
-
 function registerCommands(clientID: string, guildID: string, commands: any) {
+   const rest = new REST({ version: "9" }).setToken(token);
    rest
       .put(Routes.applicationGuildCommands(clientID, guildID), {
          body: commands,
