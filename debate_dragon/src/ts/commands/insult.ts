@@ -30,7 +30,10 @@ module.exports = {
       .setName("insult")
       .setDescription("Ping someone and insult them")
       .addUserOption((option: any) =>
-         option.setName("user").setDescription("A string").setRequired(true)
+         option
+            .setName("user")
+            .setDescription("Tag someone to insult them")
+            .setRequired(true)
       ),
 
    async execute(interaction: any) {
