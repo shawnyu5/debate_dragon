@@ -35,8 +35,9 @@ module.exports = {
 
    async execute(interaction: any) {
       let author = getAuthor(String(interaction));
+      console.log("execute author: %s", author); // __AUTO_GENERATED_PRINT_VAR__
       // let userMessage = interaction.options._hoistedOptions[0].value;
       let insult: string = await getInsult();
-      await interaction.reply(`Yo <@${author}> ${insult}`);
+      await interaction.reply(`<@${author}> ${insult}`);
    },
 };
