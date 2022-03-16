@@ -20,7 +20,7 @@ module.exports = {
         .setDescription("Ping someone and insult them")
         .addUserOption((option) => option
         .setName("user")
-        .setDescription("Tag someone to insult them")
+        .setDescription("The person you tag may be butthurt. Use at your own risk")
         .setRequired(true)),
     async execute(interaction) {
         let author = getAuthor(String(interaction));

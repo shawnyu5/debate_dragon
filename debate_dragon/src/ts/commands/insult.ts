@@ -32,7 +32,9 @@ module.exports = {
       .addUserOption((option: any) =>
          option
             .setName("user")
-            .setDescription("Tag someone to insult them")
+            .setDescription(
+               "The person you tag may be butthurt. Use at your own risk"
+            )
             .setRequired(true)
       ),
 
