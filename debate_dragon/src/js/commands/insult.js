@@ -21,7 +21,6 @@ module.exports = {
         .addUserOption((option) => option.setName("user").setDescription("A string").setRequired(true)),
     async execute(interaction) {
         let author = getAuthor(String(interaction));
-        console.log("execute author: %s", author); // __AUTO_GENERATED_PRINT_VAR__
         // let userMessage = interaction.options._hoistedOptions[0].value;
         let insult = await getInsult();
         await interaction.reply(`<@${author}> ${insult}`);
