@@ -1,15 +1,19 @@
 "use strict";
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
 Object.defineProperty(exports, "__esModule", { value: true });
 const discord_js_1 = require("discord.js");
 require("dotenv").config();
-const fs = require("fs");
-const deploy_commands = require("./deploy-commands");
+const fs_1 = __importDefault(require("fs"));
+// const deploy_commands = require("./deploy-commands");
+const deploy_commands_1 = require("./deploy-commands");
 const config = require("../../config.json");
 const client = new discord_js_1.Client({
     intents: [discord_js_1.Intents.FLAGS.GUILDS, discord_js_1.Intents.FLAGS.GUILD_MESSAGES],
 });
 client.commands = new discord_js_1.Collection();
-const commandFiles = fs
+const commandFiles = fs_1.default
     .readdirSync(__dirname + "/commands")
     .filter((file) => file.endsWith(".js"));
 for (const file of commandFiles) {
@@ -18,11 +22,12 @@ for (const file of commandFiles) {
     // With the key as the command name and the value as the exported module
     client.commands.set(command.data.name, command);
 }
+let onStart = new deploy_commands_1.OnStart();
 client.on("ready", () => {
-    let allCommands = deploy_commands.readAllCommands();
-    console.log(`${client.user.tag} logged in`);
+    let allCommands = onStart.readAllCommands();
+    console.log(`${client.user?.tag} logged in`);
     client.guilds.cache.forEach((guild) => {
-        deploy_commands.registerCommands(config.clientID, guild.id, allCommands);
+        onStart.registerCommands(config.clientID, guild.id, allCommands);
     });
 });
 client.on("interactionCreate", async (interaction) => {
@@ -43,8 +48,8 @@ client.on("interactionCreate", async (interaction) => {
     }
 });
 client.on("guildCreate", function (guild) {
-    let allCommands = deploy_commands.readAllCommands();
-    deploy_commands.registerCommands(config.clientID, guild.id, allCommands);
+    let allCommands = onStart.readAllCommands();
+    onStart.registerCommands(config.clientID, guild.id, allCommands);
 });
 // console.log(require("../../config.json").token);
 client.login(require("../../config.json").token);

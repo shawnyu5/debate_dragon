@@ -1,7 +1,8 @@
 import { Client, Collection, Intents } from "discord.js";
 require("dotenv").config();
-const fs = require("fs");
-const deploy_commands = require("./deploy-commands");
+import fs from "fs";
+// const deploy_commands = require("./deploy-commands");
+import { OnStart } from "./deploy-commands";
 const config = require("../../config.json");
 
 const client = new Client({
@@ -21,12 +22,13 @@ for (const file of commandFiles) {
    client.commands.set(command.data.name, command);
 }
 
+let onStart = new OnStart();
 client.on("ready", () => {
-   let allCommands = deploy_commands.readAllCommands();
+   let allCommands = onStart.readAllCommands();
 
-   console.log(`${client.user.tag} logged in`);
+   console.log(`${client.user?.tag} logged in`);
    client.guilds.cache.forEach((guild) => {
-      deploy_commands.registerCommands(config.clientID, guild.id, allCommands);
+      onStart.registerCommands(config.clientID, guild.id, allCommands);
    });
 });
 
@@ -48,8 +50,8 @@ client.on("interactionCreate", async (interaction) => {
 });
 
 client.on("guildCreate", function (guild) {
-   let allCommands = deploy_commands.readAllCommands();
-   deploy_commands.registerCommands(config.clientID, guild.id, allCommands);
+   let allCommands = onStart.readAllCommands();
+   onStart.registerCommands(config.clientID, guild.id, allCommands);
 });
 
 // console.log(require("../../config.json").token);
