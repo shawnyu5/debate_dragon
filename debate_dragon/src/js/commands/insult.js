@@ -6,54 +6,18 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const builders_1 = require("@discordjs/builders");
 const axios_1 = __importDefault(require("axios"));
 /**
- * gets an insult from the evil insults API
- * @returns {Promise<string>} Returns the insult from the API
- */
-async function evilInsult() {
-    try {
-        // get insult back in plain text
-        console.log("getting insult from evilinsult");
-        let response = await axios_1.default.get("https://evilinsult.com/generate_insult.php?lang=en");
-        let insult = response.data;
-        // check if response contains invalid words
-        if (insult.includes("&quot;")) {
-            await getInsult();
-        }
-        return Promise.resolve(insult);
-    }
-    catch (error) {
-        console.log(error);
-        return Promise.reject(error);
-    }
-}
-/**
  * get a insult from insult.mattbas.org/api/
  * @return {Promise} An insult in plain text
  */
-async function mattbasInsult() {
+async function getInsult() {
     try {
         // get insult back in plain text
-        console.log("getting insult from mattbas");
         let response = await axios_1.default.get("https://insult.mattbas.org/api/insult");
         return Promise.resolve(response.data);
     }
     catch (error) {
         console.log(error);
         return Promise.reject(error);
-    }
-}
-/**
- * gets an insult from either the evilinsult API or the insult.mattbas.org API
- * @returns {Promise<string>} Returns the insult from the API
- */
-async function getInsult() {
-    // generate random number between 1 and 10
-    let randomNumber = Math.floor(Math.random() * 10) + 1;
-    if (randomNumber <= 5) {
-        return await evilInsult();
-    }
-    else {
-        return await mattbasInsult();
     }
 }
 /**
