@@ -27,7 +27,8 @@ client.on("ready", () => {
     let allCommands = onStart.readAllCommands();
     console.log(`${client.user?.tag} logged in`);
     client.guilds.cache.forEach((guild) => {
-        onStart.registerCommands(config.clientID, guild.id, allCommands);
+        onStart.readAllCommands();
+        onStart.registerCommands(config.clientID, guild, allCommands, false);
     });
 });
 client.on("interactionCreate", async (interaction) => {
@@ -49,7 +50,7 @@ client.on("interactionCreate", async (interaction) => {
 });
 client.on("guildCreate", function (guild) {
     let allCommands = onStart.readAllCommands();
-    onStart.registerCommands(config.clientID, guild.id, allCommands);
+    onStart.readAllCommands();
+    onStart.registerCommands(config.clientID, guild, allCommands, false);
 });
-// console.log(require("../../config.json").token);
 client.login(require("../../config.json").token);
