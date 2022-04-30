@@ -20,21 +20,16 @@ jobs:
 
     # Steps represent a sequence of tasks that will be executed as part of the job
     steps:
-      - name: SSH Setup
-        # You may pin to the exact commit or the version.
-        # uses: MrSquaare/ssh-setup-action@8ed91aadfe85793a7db7d339cab95f07c50686e4
-        uses: MrSquaare/ssh-setup-action@v1.0.1
-        with:
-          # SSH hosts
-          host: ${{secrets.SSH_HOST}}
-          # SSH private key
-          private-key: ${{secrets.SSH_SECRET}}
-          # SSH private key name
-          # private-key-name: # optional, default is id_rsa
-      - name: refresh pm2
-        run: | 
-          cd discord_bots
-          git restore .
-          git pull
-          pm2 restart debate\ dragon
-          pm2 restart penguin\ bot
+     - name: executing remote ssh commands using password
+       uses: appleboy/ssh-action@master
+       with:
+         host: ${{ secrets.HOST }}
+#          username: ${{ secrets.USERNAME }}
+         password: ${{ secrets.PASSWORD }}
+#          port: ${{ secrets.PORT }}
+         script: |
+           cd discord_bots
+           git restore .
+           git pull
+           pm2 restart debate\ dragon
+           pm2 restart penguin\ bot
