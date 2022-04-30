@@ -1,4 +1,9 @@
-import { Interaction, MessageEmbed, User } from "discord.js";
+import {
+   CommandInteraction,
+   Interaction,
+   MessageEmbed,
+   User,
+} from "discord.js";
 import { SlashCommandBuilder } from "@discordjs/builders";
 import axios from "axios";
 
@@ -48,7 +53,8 @@ module.exports = {
             .setRequired(true)
       ),
 
-   async execute(interaction: Interaction) {
+   async execute(interaction: CommandInteraction) {
+      await interaction.deferReply();
       let author = getInsultedUser(interaction);
       // if I am being insulted, don't
       if (author == "652511543845453855") {
@@ -58,6 +64,6 @@ module.exports = {
       }
       // let userMessage = interaction.options._hoistedOptions[0].value;
       let insult: string = await getInsult();
-      await interaction.reply(`<@${author}> ${insult}`);
+      await interaction.editReply(`<@${author}> ${insult}`);
    },
 };
