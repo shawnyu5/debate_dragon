@@ -1,7 +1,7 @@
 import { REST } from "@discordjs/rest";
 import { Routes } from "discord-api-types/v9";
 import { Guild } from "discord.js";
-const { clientID, guildID, token } = require("../../config.json");
+import { clientID, guildID, token } from "../../config.json";
 import fs from "fs";
 
 class OnStart {
@@ -16,9 +16,9 @@ class OnStart {
    globalCommands: any;
 
    /**
-    * read all commands contained in `/commands` and set `this.guildCommands`
+    * read all guild commands contained in `/commands` and set `this.guildCommands`
     */
-   readAllCommands(): void {
+   readAllGuildCommands(): void {
       const commands = [];
       const commandFiles = fs
          .readdirSync(__dirname + "/commands")
@@ -44,7 +44,7 @@ class OnStart {
          const command = require(`${__dirname}/commands/global/${file}`);
          commands.push(command.data.toJSON());
       }
-      this.guildCommands = commands;
+      this.globalCommands = commands;
    }
 
    /**
@@ -63,7 +63,9 @@ class OnStart {
       const rest = new REST({ version: "9" }).setToken(token);
       (async () => {
          try {
-            console.log("Started refreshing application (/) commands");
+            console.log(
+               `Started refreshing application (/) commands for ${guild.name}`
+            );
 
             if (!global) {
                await rest.put(
@@ -78,7 +80,9 @@ class OnStart {
                });
             }
 
-            console.log("Successfully reloaded application (/) commands.");
+            console.log(
+               `Successfully reloaded application (/) commands for ${guild.name}`
+            );
          } catch (error) {
             console.error(error);
          }

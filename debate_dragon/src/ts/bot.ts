@@ -1,4 +1,10 @@
-import { Client, Collection, Intents } from "discord.js";
+import {
+   Client,
+   Collection,
+   CommandInteraction,
+   Intents,
+   Interaction,
+} from "discord.js";
 require("dotenv").config();
 import fs from "fs";
 // const deploy_commands = require("./deploy-commands");
@@ -26,7 +32,7 @@ let onStart = new OnStart();
 client.on("ready", () => {
    console.log(`${client.user?.tag} logged in`);
    client.guilds.cache.forEach((guild) => {
-      onStart.readAllCommands();
+      onStart.readAllGuildCommands();
       onStart.registerCommands(
          config.clientID,
          guild,
@@ -36,7 +42,7 @@ client.on("ready", () => {
    });
 });
 
-client.on("interactionCreate", async (interaction) => {
+client.on("interactionCreate", async (interaction: Interaction) => {
    if (!interaction.isCommand()) return;
    const command = client.commands.get(interaction.commandName);
 
@@ -44,22 +50,29 @@ client.on("interactionCreate", async (interaction) => {
 
    try {
       await command.execute(interaction);
-   } catch (error) {
+   } catch (error: any) {
       console.error(error);
       await interaction.reply({
-         content: "There was an error while executing this command!",
+         content: error.toString(),
          ephemeral: true,
       });
    }
 });
 
 client.on("guildCreate", function (guild) {
-   onStart.readAllCommands();
+   onStart.readAllGuildCommands();
+   onStart.readGlobalCommands();
    onStart.registerCommands(
       config.clientID,
       guild,
       onStart.guildCommands,
       false
+   );
+   onStart.registerCommands(
+      config.clientID,
+      guild,
+      onStart.guildCommands,
+      true
    );
 });
 

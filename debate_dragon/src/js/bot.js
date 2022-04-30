@@ -24,11 +24,10 @@ for (const file of commandFiles) {
 }
 let onStart = new deploy_commands_1.OnStart();
 client.on("ready", () => {
-    let allCommands = onStart.readAllCommands();
     console.log(`${client.user?.tag} logged in`);
     client.guilds.cache.forEach((guild) => {
-        onStart.readAllCommands();
-        onStart.registerCommands(config.clientID, guild, allCommands, false);
+        onStart.readAllGuildCommands();
+        onStart.registerCommands(config.clientID, guild, onStart.guildCommands, false);
     });
 });
 client.on("interactionCreate", async (interaction) => {
@@ -43,14 +42,15 @@ client.on("interactionCreate", async (interaction) => {
     catch (error) {
         console.error(error);
         await interaction.reply({
-            content: "There was an error while executing this command!",
+            content: error.toString(),
             ephemeral: true,
         });
     }
 });
 client.on("guildCreate", function (guild) {
-    let allCommands = onStart.readAllCommands();
-    onStart.readAllCommands();
-    onStart.registerCommands(config.clientID, guild, allCommands, false);
+    onStart.readAllGuildCommands();
+    onStart.readGlobalCommands();
+    onStart.registerCommands(config.clientID, guild, onStart.guildCommands, false);
+    onStart.registerCommands(config.clientID, guild, onStart.guildCommands, true);
 });
 client.login(require("../../config.json").token);

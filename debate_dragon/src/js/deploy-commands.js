@@ -6,7 +6,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.OnStart = void 0;
 const rest_1 = require("@discordjs/rest");
 const v9_1 = require("discord-api-types/v9");
-const { clientID, guildID, token } = require("../../config.json");
+const config_json_1 = require("../../config.json");
 const fs_1 = __importDefault(require("fs"));
 class OnStart {
     /**
@@ -18,9 +18,9 @@ class OnStart {
      */
     globalCommands;
     /**
-     * read all commands contained in `/commands` and set `this.guildCommands`
+     * read all guild commands contained in `/commands` and set `this.guildCommands`
      */
-    readAllCommands() {
+    readAllGuildCommands() {
         const commands = [];
         const commandFiles = fs_1.default
             .readdirSync(__dirname + "/commands")
@@ -43,7 +43,7 @@ class OnStart {
             const command = require(`${__dirname}/commands/global/${file}`);
             commands.push(command.data.toJSON());
         }
-        this.guildCommands = commands;
+        this.globalCommands = commands;
     }
     /**
      * register slash commands in a guild
@@ -53,10 +53,10 @@ class OnStart {
      * @param global - whether to register commands globally or not
      */
     registerCommands(clientID, guild, commands, global) {
-        const rest = new rest_1.REST({ version: "9" }).setToken(token);
+        const rest = new rest_1.REST({ version: "9" }).setToken(config_json_1.token);
         (async () => {
             try {
-                console.log("Started refreshing application (/) commands");
+                console.log(`Started refreshing application (/) commands for ${guild.name}`);
                 if (!global) {
                     await rest.put(v9_1.Routes.applicationGuildCommands(clientID, guild.id), {
                         body: commands,
@@ -67,7 +67,7 @@ class OnStart {
                         body: commands,
                     });
                 }
-                console.log("Successfully reloaded application (/) commands.");
+                console.log(`Successfully reloaded application (/) commands for ${guild.name}`);
             }
             catch (error) {
                 console.error(error);
