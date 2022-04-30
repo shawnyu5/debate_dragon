@@ -31,7 +31,7 @@ jobs:
           private-key: ${{secrets.SSH_SECRET}}
           # SSH private key name
           # private-key-name: # optional, default is id_rsa
-          script: | 
+          run: | 
             cd discord_bots
             git restore .
             git pull
