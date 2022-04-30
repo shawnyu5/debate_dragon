@@ -31,9 +31,10 @@ jobs:
           private-key: ${{secrets.SSH_SECRET}}
           # SSH private key name
           # private-key-name: # optional, default is id_rsa
-          run: | 
-            cd discord_bots
-            git restore .
-            git pull
-            pm2 restart debate\ dragon
-            pm2 restart penguin\ bot
+      - name: refresh pm2
+        run: | 
+          cd discord_bots
+          git restore .
+          git pull
+          pm2 restart debate\ dragon
+          pm2 restart penguin\ bot
