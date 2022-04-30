@@ -54,5 +54,4 @@ client.on("guildCreate", function (guild) {
    onStart.registerCommands(config.clientID, guild.id, allCommands);
 });
 
-// console.log(require("../../config.json").token);
 client.login(require("../../config.json").token);

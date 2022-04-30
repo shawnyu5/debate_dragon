@@ -21,6 +21,7 @@ class OnStart {
    commands = this.readAllCommands();
 
    /**
+    * register slash commands in a guild
     * @param clientID - ClientID
     * @param guildID - guildID
     * @param commands - array of commands
