@@ -9,9 +9,16 @@ const v9_1 = require("discord-api-types/v9");
 const { clientID, guildID, token } = require("../../config.json");
 const fs_1 = __importDefault(require("fs"));
 class OnStart {
-    commands;
     /**
-     * read all commands contained in `/commands` and set `this.commands`
+     * registered slash commands in a guild
+     */
+    guildCommands;
+    /**
+     * registered global slash commands
+     */
+    globalCommands;
+    /**
+     * read all commands contained in `/commands` and set `this.guildCommands`
      */
     readAllCommands() {
         const commands = [];
@@ -22,7 +29,21 @@ class OnStart {
             const command = require(`${__dirname}/commands/${file}`);
             commands.push(command.data.toJSON());
         }
-        this.commands = commands;
+        this.guildCommands = commands;
+    }
+    /**
+     * read all commands contained in `/commands/global` and set `this.globalCommands`
+     */
+    readGlobalCommands() {
+        const commands = [];
+        const commandFiles = fs_1.default
+            .readdirSync(__dirname + "/commands/global")
+            .filter((file) => file.endsWith(".js"));
+        for (const file of commandFiles) {
+            const command = require(`${__dirname}/commands/global/${file}`);
+            commands.push(command.data.toJSON());
+        }
+        this.guildCommands = commands;
     }
     /**
      * register slash commands in a guild

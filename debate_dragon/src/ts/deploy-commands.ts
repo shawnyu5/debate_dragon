@@ -5,9 +5,18 @@ const { clientID, guildID, token } = require("../../config.json");
 import fs from "fs";
 
 class OnStart {
-   commands: any;
    /**
-    * read all commands contained in `/commands` and set `this.commands`
+    * registered slash commands in a guild
+    */
+   guildCommands: any;
+
+   /**
+    * registered global slash commands
+    */
+   globalCommands: any;
+
+   /**
+    * read all commands contained in `/commands` and set `this.guildCommands`
     */
    readAllCommands(): void {
       const commands = [];
@@ -19,7 +28,23 @@ class OnStart {
          const command = require(`${__dirname}/commands/${file}`);
          commands.push(command.data.toJSON());
       }
-      this.commands = commands;
+      this.guildCommands = commands;
+   }
+
+   /**
+    * read all commands contained in `/commands/global` and set `this.globalCommands`
+    */
+   readGlobalCommands(): void {
+      const commands = [];
+      const commandFiles = fs
+         .readdirSync(__dirname + "/commands/global")
+         .filter((file: string) => file.endsWith(".js"));
+
+      for (const file of commandFiles) {
+         const command = require(`${__dirname}/commands/global/${file}`);
+         commands.push(command.data.toJSON());
+      }
+      this.guildCommands = commands;
    }
 
    /**

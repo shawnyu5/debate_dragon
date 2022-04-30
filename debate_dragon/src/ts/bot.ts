@@ -24,12 +24,15 @@ for (const file of commandFiles) {
 
 let onStart = new OnStart();
 client.on("ready", () => {
-   let allCommands = onStart.readAllCommands();
-
    console.log(`${client.user?.tag} logged in`);
    client.guilds.cache.forEach((guild) => {
       onStart.readAllCommands();
-      onStart.registerCommands(config.clientID, guild, allCommands, false);
+      onStart.registerCommands(
+         config.clientID,
+         guild,
+         onStart.guildCommands,
+         false
+      );
    });
 });
 
@@ -51,9 +54,13 @@ client.on("interactionCreate", async (interaction) => {
 });
 
 client.on("guildCreate", function (guild) {
-   let allCommands = onStart.readAllCommands();
    onStart.readAllCommands();
-   onStart.registerCommands(config.clientID, guild, allCommands, false);
+   onStart.registerCommands(
+      config.clientID,
+      guild,
+      onStart.guildCommands,
+      false
+   );
 });
 
 client.login(require("../../config.json").token);
