@@ -3,6 +3,7 @@ import { Routes } from "discord-api-types/v9";
 import { Guild } from "discord.js";
 import { clientID, guildID, token } from "../../config.json";
 import fs from "fs";
+import { Command } from "./command";
 
 class OnStart {
    /**
@@ -26,7 +27,8 @@ class OnStart {
 
       for (const file of commandFiles) {
          const command = require(`${__dirname}/commands/${file}`);
-         commands.push(command.data.toJSON());
+         const commandobj = new command(this);
+         commands.push(commandobj.slashCommmand.toJSON());
       }
       this.guildCommands = commands;
    }
@@ -87,14 +89,6 @@ class OnStart {
             console.error(error);
          }
       })();
-      // rest
-      // .put(Routes.applicationGuildCommands(clientID, guildID), {
-      // body: commands,
-      // })
-      // .then(() =>
-      // console.log("Successfully registered application commands.")
-      // )
-      // .catch(console.error);
    }
 }
 

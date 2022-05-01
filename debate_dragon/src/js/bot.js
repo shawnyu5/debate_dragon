@@ -18,9 +18,10 @@ const commandFiles = fs_1.default
     .filter((file) => file.endsWith(".js"));
 for (const file of commandFiles) {
     const command = require(`./commands/${file}`);
+    console.log("for_in command: %s", command); // __AUTO_GENERATED_PRINT_VAR__
     // Set a new item in the Collection
     // With the key as the command name and the value as the exported module
-    client.commands.set(command.data.name, command);
+    client.commands.set(command.name, command);
 }
 let onStart = new deploy_commands_1.OnStart();
 client.on("ready", () => {

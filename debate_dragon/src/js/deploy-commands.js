@@ -27,7 +27,8 @@ class OnStart {
             .filter((file) => file.endsWith(".js"));
         for (const file of commandFiles) {
             const command = require(`${__dirname}/commands/${file}`);
-            commands.push(command.data.toJSON());
+            const commandobj = new command(this);
+            commands.push(commandobj.slashCommmand.toJSON());
         }
         this.guildCommands = commands;
     }
@@ -73,14 +74,6 @@ class OnStart {
                 console.error(error);
             }
         })();
-        // rest
-        // .put(Routes.applicationGuildCommands(clientID, guildID), {
-        // body: commands,
-        // })
-        // .then(() =>
-        // console.log("Successfully registered application commands.")
-        // )
-        // .catch(console.error);
     }
 }
 exports.OnStart = OnStart;

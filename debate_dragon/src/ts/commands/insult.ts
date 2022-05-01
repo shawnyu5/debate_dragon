@@ -1,11 +1,7 @@
-import {
-   CommandInteraction,
-   Interaction,
-   MessageEmbed,
-   User,
-} from "discord.js";
+import { Client, CommandInteraction, Interaction, Options } from "discord.js";
 import { SlashCommandBuilder } from "@discordjs/builders";
 import axios from "axios";
+import { Command } from "../command";
 
 /**
  * get a insult from insult.mattbas.org/api/
@@ -31,18 +27,20 @@ function getInsultedUser(interaction: Interaction): string {
    return String(interaction).split(":")[1];
 }
 
-module.exports = {
-   data: new SlashCommandBuilder()
-      .setName("insult")
-      .setDescription("Ping someone and insult them")
-      .addUserOption((option: any) =>
-         option
-            .setName("user")
-            .setDescription(
-               "The person you tag may be butthurt. Use at your own risk"
-            )
-            .setRequired(true)
-      ),
+module.exports = class Insult extends Command {
+   constructor(client: Client) {
+      super(client, {
+         name: "insult",
+         description: "Ping someone and insult them",
+         // @ts-ignore
+         slashCommand: new SlashCommandBuilder().addUserOption((option: any) =>
+            option
+               .setName("user")
+               .setDescription("The user to insult")
+               .setRequired(true)
+         ),
+      });
+   }
 
    async execute(interaction: CommandInteraction) {
       await interaction.deferReply();
@@ -55,5 +53,17 @@ module.exports = {
       }
       let insult: string = await getInsult();
       await interaction.editReply(`<@${author}> ${insult}`);
-   },
+   }
 };
+
+// data: new SlashCommandBuilder()
+// .setName("insult")
+// .setDescription("Ping someone and insult them")
+// .addUserOption((option: any) =>
+// option
+// .setName("user")
+// .setDescription(
+// "The person you tag may be butthurt. Use at your own risk"
+// )
+// .setRequired(true)
+// ),
