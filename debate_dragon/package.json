@@ -5,9 +5,9 @@
    "main": "./src/js/bot.js",
    "scripts": {
       "compile": "tsc -w",
-      "start": "node .",
+      "start": "tsc; node .",
       "nodemon": "nodemon .",
-      "dev": "concurrently \"npm:nodemon\" \"npm:compile\"",
+      "dev": "ts-node .",
       "test": "jest --watch"
    },
    "author": "Shawn Yu",
