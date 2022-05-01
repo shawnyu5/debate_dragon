@@ -1,9 +1,4 @@
-import {
-   CommandInteraction,
-   Interaction,
-   MessageEmbed,
-   User,
-} from "discord.js";
+import { CommandInteraction, Interaction } from "discord.js";
 import { SlashCommandBuilder } from "@discordjs/builders";
 import axios from "axios";
 

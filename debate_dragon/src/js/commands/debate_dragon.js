@@ -1,9 +1,10 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-const { SlashCommandBuilder } = require("@discordjs/builders");
+// import { ApplicationCommandType } from "discord-api-types";
+const builders_1 = require("@discordjs/builders");
 const { textOverlay } = require("../utils");
 module.exports = {
-    data: new SlashCommandBuilder()
+    data: new builders_1.SlashCommandBuilder()
         .setName("dd")
         .setDescription("Summons a dragon to burn your debate fows to the ground")
         .addStringOption((option) => option.setName("message").setDescription("A string").setRequired(true)),

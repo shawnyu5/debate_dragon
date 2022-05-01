@@ -1,6 +1,5 @@
 // import { ApplicationCommandType } from "discord-api-types";
-import { MessageEmbed } from "discord.js";
-const { SlashCommandBuilder } = require("@discordjs/builders");
+import { SlashCommandBuilder } from "@discordjs/builders";
 const { textOverlay } = require("../utils");
 
 module.exports = {
