@@ -6,7 +6,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.OnStart = void 0;
 const rest_1 = require("@discordjs/rest");
 const v9_1 = require("discord-api-types/v9");
-const config_json_1 = require("../../config.json");
+const config_json_1 = require("../config.json");
 const fs_1 = __importDefault(require("fs"));
 class OnStart {
     /**

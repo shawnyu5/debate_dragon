@@ -2,12 +2,12 @@
    "name": "debate_dragon",
    "version": "1.0.0",
    "description": "",
-   "main": "./src/js/bot.js",
+   "main": "./build/bot.js",
    "scripts": {
       "compile": "tsc -w",
       "start": "tsc; node .",
       "nodemon": "nodemon .",
-      "dev": "ts-node .",
+      "dev": "nodemon ./src/bot.ts",
       "test": "jest --watch"
    },
    "author": "Shawn Yu",

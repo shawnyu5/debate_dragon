@@ -22,8 +22,8 @@
       // "useDefineForClassFields": true,                  /* Emit ECMAScript-standard-compliant class fields. */
       /* Modules */
       "module": "commonjs", /* Specify what module code is generated. */
-      "rootDir": "./src/ts", /* Specify the root folder within your source files. */
-      "outDir": "./src/js", /* Specify an output folder for all emitted files. */
+      "rootDir": "./src", /* Specify the root folder within your source files. */
+      "outDir": "./build", /* Specify an output folder for all emitted files. */ // TODO: change this to /build
       // "moduleResolution": "node",                       /* Specify how TypeScript looks up a file from a given module specifier. */
       // "baseUrl": "./",                                  /* Specify the base directory to resolve non-relative module names. */
       // "paths": {},                                      /* Specify a set of entries that re-map imports to additional lookup locations. */
