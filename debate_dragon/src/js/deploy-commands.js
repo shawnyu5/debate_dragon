@@ -27,8 +27,7 @@ class OnStart {
             .filter((file) => file.endsWith(".js"));
         for (const file of commandFiles) {
             const command = require(`${__dirname}/commands/${file}`);
-            const commandobj = new command(this);
-            commands.push(commandobj.slashCommmand.toJSON());
+            commands.push(command.toJSON());
         }
         this.guildCommands = commands;
     }

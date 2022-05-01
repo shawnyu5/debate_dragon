@@ -1,9 +1,10 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.DebateDragon = void 0;
 const builders_1 = require("@discordjs/builders");
 const command_1 = require("../command");
 const { textOverlay } = require("../utils");
-module.exports = class DebateDragon extends command_1.Command {
+class DebateDragon extends command_1.Command {
     constructor(client) {
         super(client, {
             name: "dd",
@@ -24,7 +25,8 @@ module.exports = class DebateDragon extends command_1.Command {
             });
         }
     }
-};
+}
+exports.DebateDragon = DebateDragon;
 // data: new SlashCommandBuilder()
 // .setName("dd")
 // .setDescription("Summons a dragon to burn your debate fows to the ground")

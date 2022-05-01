@@ -27,7 +27,7 @@ function getInsultedUser(interaction: Interaction): string {
    return String(interaction).split(":")[1];
 }
 
-module.exports = class Insult extends Command {
+export class Insult extends Command {
    constructor(client: Client) {
       super(client, {
          name: "insult",
@@ -54,7 +54,7 @@ module.exports = class Insult extends Command {
       let insult: string = await getInsult();
       await interaction.editReply(`<@${author}> ${insult}`);
    }
-};
+}
 
 // data: new SlashCommandBuilder()
 // .setName("insult")

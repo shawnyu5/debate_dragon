@@ -3,6 +3,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.Insult = void 0;
 const builders_1 = require("@discordjs/builders");
 const axios_1 = __importDefault(require("axios"));
 const command_1 = require("../command");
@@ -29,7 +30,7 @@ async function getInsult() {
 function getInsultedUser(interaction) {
     return String(interaction).split(":")[1];
 }
-module.exports = class Insult extends command_1.Command {
+class Insult extends command_1.Command {
     constructor(client) {
         super(client, {
             name: "insult",
@@ -53,7 +54,8 @@ module.exports = class Insult extends command_1.Command {
         let insult = await getInsult();
         await interaction.editReply(`<@${author}> ${insult}`);
     }
-};
+}
+exports.Insult = Insult;
 // data: new SlashCommandBuilder()
 // .setName("insult")
 // .setDescription("Ping someone and insult them")

@@ -4,7 +4,7 @@ import { SlashCommandBuilder } from "@discordjs/builders";
 import { Command } from "../command";
 const { textOverlay } = require("../utils");
 
-module.exports = class DebateDragon extends Command {
+export class DebateDragon extends Command {
    constructor(client: Client) {
       super(client, {
          name: "dd",
@@ -29,7 +29,7 @@ module.exports = class DebateDragon extends Command {
          });
       }
    }
-};
+}
 // data: new SlashCommandBuilder()
 // .setName("dd")
 // .setDescription("Summons a dragon to burn your debate fows to the ground")
