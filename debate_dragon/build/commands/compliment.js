@@ -15,19 +15,11 @@ module.exports = {
         .setRequired(true)),
     async execute(interaction) {
         await interaction.deferReply();
-        let author = getTaggedUser(interaction);
+        let target = interaction.options.getUser("user")?.id;
         let compliment = await getCompliment();
-        await interaction.editReply(`<@${author}> ${compliment}`);
+        await interaction.editReply(`<@${target}> ${compliment}`);
     },
 };
-/**
- * get the user that is being complimented
- * @param interaction - the interaction object
- * @returns the id of the user tagged in the message
- */
-function getTaggedUser(interaction) {
-    return String(interaction).split(":")[1];
-}
 /**
  * @returns a compliment in plain text
  */

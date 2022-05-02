@@ -41,11 +41,3 @@ async function getInsult() {
         return Promise.reject(error);
     }
 }
-/**
- * get the user that is being insulted
- * @param interaction - the interaction object
- * @returns the id of the user tagged in the message
- */
-function getInsultedUser(interaction) {
-    return String(interaction).split(":")[1];
-}
