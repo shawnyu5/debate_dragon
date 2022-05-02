@@ -11,11 +11,11 @@ module.exports = {
       ),
 
    async execute(interaction: any) {
+      await interaction.deferReply();
       let userMessage = interaction.options._hoistedOptions[0].value;
       console.log("execute userMessage: %s", userMessage); // __AUTO_GENERATED_PRINT_VAR__
       await textOverlay(userMessage);
-      await interaction.reply({
-         // embeds: [message],
+      await interaction.editReply({
          files: ["media/img/done.png"],
       });
    },

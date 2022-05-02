@@ -6,7 +6,6 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const discord_js_1 = require("discord.js");
 require("dotenv").config();
 const fs_1 = __importDefault(require("fs"));
-// const deploy_commands = require("./deploy-commands");
 const deploy_commands_1 = require("./deploy-commands");
 const config_json_1 = __importDefault(require("../config.json"));
 const client = new discord_js_1.Client({
@@ -27,6 +26,7 @@ client.on("ready", () => {
     console.log(`${client.user?.tag} logged in`);
     client.guilds.cache.forEach((guild) => {
         onStart.readAllGuildCommands();
+        // onStart.deleteRegisteredCommands(config.clientID, guild);
         onStart.registerCommands(config_json_1.default.clientID, guild, onStart.guildCommands, false);
     });
 });

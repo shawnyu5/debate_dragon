@@ -73,14 +73,27 @@ class OnStart {
                 console.error(error);
             }
         })();
-        // rest
-        // .put(Routes.applicationGuildCommands(clientID, guildID), {
-        // body: commands,
-        // })
-        // .then(() =>
-        // console.log("Successfully registered application commands.")
-        // )
-        // .catch(console.error);
+    }
+    /**
+     * delete all registered commands in a guild
+     * @param clientID - ClientID
+     * @param guild - Guild object
+     */
+    deleteRegisteredCommands(clientID, guild) {
+        console.log("Deleting slash commands for " + guild.name);
+        const rest = new rest_1.REST({ version: "9" }).setToken(config_json_1.token);
+        rest
+            .get(v9_1.Routes.applicationGuildCommands(clientID, guild.id))
+            .then((data) => {
+            const promises = [];
+            for (const command of data) {
+                const deleteUrl = `${v9_1.Routes.applicationGuildCommands(clientID, guild.id)}/${command.id}`;
+                // @ts-ignore
+                promises.push(rest.delete(deleteUrl));
+            }
+            console.log("Finished deleting slash commands for " + guild.name);
+            return Promise.all(promises);
+        });
     }
 }
 exports.OnStart = OnStart;

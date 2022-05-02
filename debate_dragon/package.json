@@ -7,7 +7,7 @@
       "compile": "tsc -w",
       "start": "tsc; node .",
       "nodemon": "nodemon .",
-      "dev": "nodemon ./src/bot.ts",
+      "dev": "concurrently \"tsc -w\" \"nodemon ./build/bot.js\"",
       "test": "jest --watch"
    },
    "author": "Shawn Yu",
