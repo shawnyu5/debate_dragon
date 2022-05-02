@@ -7,9 +7,14 @@ import {
 } from "discord.js";
 require("dotenv").config();
 import fs from "fs";
-// const deploy_commands = require("./deploy-commands");
 import { OnStart } from "./deploy-commands";
 import config from "../config.json";
+
+declare module "discord.js" {
+   export interface Client {
+      commands: Collection<unknown, any>;
+   }
+}
 
 const client = new Client({
    intents: [Intents.FLAGS.GUILDS, Intents.FLAGS.GUILD_MESSAGES],
