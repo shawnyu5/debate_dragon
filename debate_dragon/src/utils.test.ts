@@ -1,6 +1,7 @@
-const Utils = require("./utils");
+import { removeCommandPrefix, constructCommandArgs } from "./utils";
+import { Interaction } from "discord.js";
 
 test("should remove command from message", () => {
-  let result = Utils.removeCommand("$dd", "$dd hello world");
-  expect(result).toMatch(/hello world/);
+   let result = removeCommandPrefix("$dd", "$dd hello world");
+   expect(result).toMatch(/hello world/);
 });

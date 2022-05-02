@@ -1,6 +1,9 @@
-const Jimp = require("jimp");
+import { Interaction } from "discord.js";
+import Jimp from "jimp";
+import IArgs from "./types/args";
 
-async function textOverlay(text: string): Promise<any> {
+export async function textOverlay(text: string): Promise<any> {
+   console.log("textOverlay text: %s", text); // __AUTO_GENERATED_PRINT_VAR__
    // Reading image
    const image = await Jimp.read("media/img/dragon_drawing.png");
    // Defining the text font
@@ -35,11 +38,12 @@ async function textOverlay(text: string): Promise<any> {
    await image.writeAsync("media/img/done.png");
 }
 
-function removeCommand(command: string, message: string): string {
+/**
+ * removes the prefix from a command
+ * @param command - The command prefix
+ * @param message - the command string
+ * @returns - the command string without the prefix
+ */
+export function removeCommandPrefix(command: string, message: string): string {
    return message.replace(command, "");
 }
-
-module.exports = {
-   removeCommand: removeCommand,
-   textOverlay: textOverlay,
-};
