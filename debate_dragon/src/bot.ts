@@ -9,7 +9,7 @@ require("dotenv").config();
 import fs from "fs";
 // const deploy_commands = require("./deploy-commands");
 import { OnStart } from "./deploy-commands";
-const config = require("../../config.json");
+import config from "../config.json";
 
 const client = new Client({
    intents: [Intents.FLAGS.GUILDS, Intents.FLAGS.GUILD_MESSAGES],

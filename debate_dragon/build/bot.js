@@ -8,7 +8,7 @@ require("dotenv").config();
 const fs_1 = __importDefault(require("fs"));
 // const deploy_commands = require("./deploy-commands");
 const deploy_commands_1 = require("./deploy-commands");
-const config = require("../../config.json");
+const config_json_1 = __importDefault(require("../config.json"));
 const client = new discord_js_1.Client({
     intents: [discord_js_1.Intents.FLAGS.GUILDS, discord_js_1.Intents.FLAGS.GUILD_MESSAGES],
 });
@@ -27,7 +27,7 @@ client.on("ready", () => {
     console.log(`${client.user?.tag} logged in`);
     client.guilds.cache.forEach((guild) => {
         onStart.readAllGuildCommands();
-        onStart.registerCommands(config.clientID, guild, onStart.guildCommands, false);
+        onStart.registerCommands(config_json_1.default.clientID, guild, onStart.guildCommands, false);
     });
 });
 client.on("interactionCreate", async (interaction) => {
@@ -50,7 +50,7 @@ client.on("interactionCreate", async (interaction) => {
 client.on("guildCreate", function (guild) {
     onStart.readAllGuildCommands();
     onStart.readGlobalCommands();
-    onStart.registerCommands(config.clientID, guild, onStart.guildCommands, false);
-    onStart.registerCommands(config.clientID, guild, onStart.guildCommands, true);
+    onStart.registerCommands(config_json_1.default.clientID, guild, onStart.guildCommands, false);
+    onStart.registerCommands(config_json_1.default.clientID, guild, onStart.guildCommands, true);
 });
 client.login(require("../config.json").token);
