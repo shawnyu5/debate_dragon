@@ -38,6 +38,7 @@ client.on("ready", () => {
    console.log(`${client.user?.tag} logged in`);
    client.guilds.cache.forEach((guild) => {
       onStart.readAllGuildCommands();
+      // onStart.deleteRegisteredCommands(config.clientID, guild);
       onStart.registerCommands(
          config.clientID,
          guild,
