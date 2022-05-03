@@ -33,10 +33,21 @@ module.exports = {
 async function getInsult() {
     try {
         // get insult back in plain text
-        let response = await axios_1.default.get("https://insult.mattbas.org/api/insult");
-        return Promise.resolve(response.data);
+        console.log("getting api");
+        try {
+            let response = await axios_1.default.get("https://insult.mattbas.org/api/insult", { timeout: 5000 });
+            console.log("done getting api");
+            return Promise.resolve(response.data);
+        }
+        catch (e) {
+            let response = await axios_1.default.get("https://evilinsult.com/generate_insult.php?lang=en&type=json", { timeout: 5000 });
+            console.log("done getting api 2");
+            console.log(JSON.stringify(response.data, null, 3));
+            return Promise.resolve(response.data.insult);
+        }
     }
     catch (error) {
+        console.log("Promise rejected");
         console.log(error);
         return Promise.reject(error);
     }
