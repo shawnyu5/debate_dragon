@@ -42,26 +42,17 @@ module.exports = {
 async function getInsult(): Promise<string> {
    try {
       // get insult back in plain text
-      try {
-         console.log("getting insult from mattbas");
-         let response = await axios.get(
-            "https://insult.mattbas.org/api/insult",
-            { timeout: 5000 }
-         );
-         console.log(JSON.stringify(response.data, null, 3));
-         return Promise.resolve(response.data);
-      } catch (e) {
-         console.log("getting insult from evil api");
-         let response = await axios.get(
-            "https://evilinsult.com/generate_insult.php?lang=en&type=json"
-            // { timeout: 10000 }
-         );
-         console.log(JSON.stringify(response, null, 3));
-         return Promise.resolve(response.data.insult);
-      }
+      console.log("getting insult from mattbas");
+      // throw new Error();
+      let response = await axios.get("https://insult.mattbas.org/api/insult", {
+         timeout: 5000,
+      });
+      console.log(JSON.stringify(response.data, null, 3));
+      return Promise.resolve(response.data);
    } catch (error) {
-      console.log("Promise rejected");
-      console.log(error);
-      return Promise.reject(error);
+      // console.log("Promise rejected");
+      // console.log(error);
+      // return Promise.reject(error);
+      return Promise.resolve("fuck you");
    }
 }
