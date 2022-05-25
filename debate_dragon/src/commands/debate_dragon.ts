@@ -15,7 +15,7 @@ module.exports = {
       await interaction.deferReply();
       let userMessage = interaction.options.get("message");
       console.log("execute userMessage: %s", userMessage?.value); // __AUTO_GENERATED_PRINT_VAR__
-      await textOverlay(userMessage.value?.toString());
+      await textOverlay(userMessage.value?.toString() as string);
       await interaction.editReply({
          files: ["media/img/done.png"],
       });

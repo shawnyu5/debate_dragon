@@ -74,12 +74,12 @@ client.on("guildCreate", function (guild) {
       onStart.guildCommands,
       false
    );
-   onStart.registerCommands(
-      config.clientID,
-      guild,
-      onStart.guildCommands,
-      true
-   );
+   // onStart.registerCommands(
+   // config.clientID,
+   // guild,
+   // onStart.guildCommands,
+   // true
+   // );
 });
 
 client.login(require("../config.json").token);

@@ -1,6 +1,7 @@
 import { REST } from "@discordjs/rest";
 import { Routes } from "discord-api-types/v9";
 import { Guild } from "discord.js";
+// @ts-ignore
 import { clientID, guildID, token } from "../config.json";
 import fs from "fs";
 

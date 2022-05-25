@@ -35,7 +35,6 @@ module.exports = {
 async function getInsult(): Promise<string> {
    try {
       // get insult back in plain text
-      console.log("getting api");
       try {
          let response = await axios.get(
             "https://insult.mattbas.org/api/insult",
