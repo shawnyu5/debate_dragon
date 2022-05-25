@@ -16,7 +16,9 @@ module.exports = {
       ),
 
    async execute(interaction: CommandInteraction) {
+      console.log("defering reply");
       await interaction.deferReply();
+      console.log("defered reply");
       let author = interaction.options.getUser("user")?.id;
       // if I am being insulted, don't
       if (author == "652511543845453855") {
@@ -24,7 +26,12 @@ module.exports = {
          // get the user that ran the command and insult them instead
          author = String(interaction.user.id);
       }
-      let insult: string = await getInsult();
+      let insult: string;
+      try {
+         insult = await getInsult();
+      } catch (e) {
+         insult = "fuck you";
+      }
       await interaction.editReply(`<@${author}> ${insult}`);
    },
 };
@@ -36,17 +43,20 @@ async function getInsult(): Promise<string> {
    try {
       // get insult back in plain text
       try {
+         console.log("getting insult from mattbas");
          let response = await axios.get(
             "https://insult.mattbas.org/api/insult",
             { timeout: 5000 }
          );
+         console.log(JSON.stringify(response.data, null, 3));
          return Promise.resolve(response.data);
       } catch (e) {
+         console.log("getting insult from evil api");
          let response = await axios.get(
-            "https://evilinsult.com/generate_insult.php?lang=en&type=json",
-            { timeout: 5000 }
+            "https://evilinsult.com/generate_insult.php?lang=en&type=json"
+            // { timeout: 10000 }
          );
-         console.log(JSON.stringify(response.data, null, 3));
+         console.log(JSON.stringify(response, null, 3));
          return Promise.resolve(response.data.insult);
       }
    } catch (error) {
