@@ -16,6 +16,7 @@ module.exports = {
       let userMessage = interaction.options.get("message")?.value as string;
       console.log("execute userMessage: %s", userMessage); // __AUTO_GENERATED_PRINT_VAR__
       if (userMessage.length > 20) {
+         console.log("userMessage too long, cutting short");
          userMessage = userMessage.substring(0, 20);
       }
       await textOverlay(userMessage);

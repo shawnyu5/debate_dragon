@@ -3,7 +3,6 @@ import Jimp from "jimp";
 import IArgs from "./types/args";
 
 export async function textOverlay(text: string): Promise<any> {
-   console.log("textOverlay text: %s", text); // __AUTO_GENERATED_PRINT_VAR__
    // Reading image
    const image = await Jimp.read("media/img/dragon_drawing.png");
    // Defining the text font
