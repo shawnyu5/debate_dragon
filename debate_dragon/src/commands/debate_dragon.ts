@@ -13,9 +13,13 @@ module.exports = {
 
    async execute(interaction: CommandInteraction) {
       await interaction.deferReply();
-      let userMessage = interaction.options.get("message");
-      console.log("execute userMessage: %s", userMessage?.value); // __AUTO_GENERATED_PRINT_VAR__
-      await textOverlay(userMessage.value?.toString() as string);
+      let userMessage = interaction.options.get("message")?.value as string;
+      console.log("execute userMessage: %s", userMessage); // __AUTO_GENERATED_PRINT_VAR__
+      console.log("execute#if userMessage.length: %s", userMessage.length); // __AUTO_GENERATED_PRINT_VAR__
+      if (userMessage.length > 25) {
+         userMessage = userMessage.substring(0, 25);
+      }
+      await textOverlay(userMessage);
       await interaction.editReply({
          files: ["media/img/done.png"],
       });
