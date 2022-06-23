@@ -4,5 +4,7 @@ export interface IConfig {
    guildID: string;
    carmenRambles: {
       subscribers: Array<string>;
+      // the channel name to send notifications too.
+      channelName: string;
    };
 }
