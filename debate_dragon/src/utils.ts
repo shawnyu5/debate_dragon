@@ -39,14 +39,11 @@ export async function textOverlay(text: string): Promise<any> {
 
 /**
  * write a key value pair to config.json
- * @param key the key to write
- * @param value the value to write
+ * @param newConfig - the config object to write to file
  */
-export function writeToConfig(key: string, value: any): void {
-   let config = require("../config.json");
-   config[key] = value;
+export function writeToConfig(newConfig: any): void {
    fs.writeFileSync(
       path.resolve(__dirname + "/../config.json"),
-      JSON.stringify(config, null, 2)
+      JSON.stringify(newConfig, null, 2)
    );
 }

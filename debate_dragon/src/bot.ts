@@ -48,6 +48,10 @@ client.on("ready", () => {
    });
 });
 
+client.on("messageCreate", async (message) => {
+   console.log(message.content);
+});
+
 client.on("interactionCreate", async (interaction: Interaction) => {
    if (!interaction.isCommand()) return;
    const command = client.commands.get(interaction.commandName);
