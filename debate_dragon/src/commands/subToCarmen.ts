@@ -4,7 +4,7 @@ import { writeToConfig } from "../utils";
 
 module.exports = {
    data: new SlashCommandBuilder()
-      .setName("subtocarmen")
+      .setName("subforcarmen")
       .setDescription("Subscribes to Carmen's ramblings for free!")
       .addBooleanOption((option) => {
          return option
@@ -27,12 +27,13 @@ module.exports = {
             );
             return;
          }
+         config["carmenSubscribers"].push(user);
          writeToConfig("carmenSubscribers", config["carmenSubscribers"]);
          await interaction.editReply(
             "You are now subscribed to CaramelCorn rambles!"
          );
       } else {
-         if (!config["carmenSubscribers"].includes(user)) {
+         if (config["carmenSubscribers"].includes(user)) {
             config["carmenSubscribers"] = config["carmenSubscribers"].filter(
                (id: string) => id !== user
             );
