@@ -1,6 +1,6 @@
-import { Interaction } from "discord.js";
 import Jimp from "jimp";
-import IArgs from "./types/args";
+import fs from "fs";
+import path from "path";
 
 export async function textOverlay(text: string): Promise<any> {
    // Reading image
@@ -38,11 +38,15 @@ export async function textOverlay(text: string): Promise<any> {
 }
 
 /**
- * removes the prefix from a command
- * @param command - The command prefix
- * @param message - the command string
- * @returns - the command string without the prefix
+ * write a key value pair to config.json
+ * @param key the key to write
+ * @param value the value to write
  */
-export function removeCommandPrefix(command: string, message: string): string {
-   return message.replace(command, "");
+export function writeToConfig(key: string, value: any): void {
+   let config = require("../config.json");
+   config[key] = value;
+   fs.writeFileSync(
+      path.resolve(__dirname + "/../config.json"),
+      JSON.stringify(config, null, 2)
+   );
 }
