@@ -1,6 +1,7 @@
 import Jimp from "jimp";
 import fs from "fs";
 import path from "path";
+import { Client, TextChannel } from "discord.js";
 
 export async function textOverlay(text: string): Promise<any> {
    // Reading image
@@ -46,4 +47,21 @@ export function writeToConfig(newConfig: any): void {
       path.resolve(__dirname + "/../config.json"),
       JSON.stringify(newConfig, null, 2)
    );
+}
+
+/**
+ * Search for a channel by name
+ * @param client - discord client
+ * @param channelName - name of channel to search for
+ * @returns channel object
+ */
+export function getChannelByName(
+   client: Client,
+   channelName: string
+): TextChannel | undefined {
+   const channel = client.channels.cache.find((ch) => {
+      // @ts-ignore
+      return ch.name == channelName;
+   });
+   return channel as TextChannel;
 }
