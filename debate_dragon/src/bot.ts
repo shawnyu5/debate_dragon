@@ -52,20 +52,24 @@ client.on("ready", () => {
 });
 
 client.on("messageCreate", async (message) => {
-   // if message is sent by carmen
+   // if message is not sent by carmen, ignore it
    if (message.author.id != config.carmenRambles.carmenId) {
       return;
    }
+
+   logger.info("Carmen sent a message");
    // 10 messages within 5 minutes will trigger a notification
    const dbMessageCreationTime = "carmenMessageTimeStamp";
    const dbCounterLabel = "carmenCounter";
    const messageCreationTime = message.createdAt;
    const previousMessageTime: Date | null = await db.get(dbMessageCreationTime);
+
    // if we have a previous message
    if (previousMessageTime) {
-      // calculate the time differnce between current message and previous
+      // calculate the time difference between current message and previous
       let timeDifference =
          messageCreationTime.getMinutes() - previousMessageTime?.getMinutes();
+
       // if both messages are send with in 5 mins, update counter
       if (timeDifference < 5) {
          let counter: number = (await db.get(dbCounterLabel)) as number;
@@ -84,7 +88,6 @@ client.on("messageCreate", async (message) => {
    }
 
    db.set(dbMessageCreationTime, messageCreationTime);
-   console.log("Carmen sent a message");
    if (((await db.get(dbCounterLabel)) as number) >= 10) {
       const subToCarmen = require("./commands/subToCarmen");
       subToCarmen.sendNotification(client);
@@ -108,7 +111,7 @@ client.on("interactionCreate", async (interaction: Interaction) => {
    }
 });
 
-client.on("guildCreate", function(guild) {
+client.on("guildCreate", function (guild) {
    onStart.readAllGuildCommands();
    onStart.readGlobalCommands();
    onStart.registerCommands(
