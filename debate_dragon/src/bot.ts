@@ -10,6 +10,7 @@ import fs from "fs";
 import { OnStart } from "./deploy-commands";
 import config from "../config.json";
 import { QuickDB } from "quick.db";
+import logger from "./logger";
 
 declare module "discord.js" {
    export interface Client {
@@ -37,7 +38,7 @@ for (const file of commandFiles) {
 let onStart = new OnStart();
 let db = new QuickDB();
 client.on("ready", () => {
-   console.log(`${client.user?.tag} logged in`);
+   logger.info(`${client.user?.tag} logged in`);
    client.guilds.cache.forEach((guild) => {
       onStart.readAllGuildCommands();
       // onStart.deleteRegisteredCommands(config.clientID, guild);
