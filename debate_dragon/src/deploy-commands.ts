@@ -4,6 +4,7 @@ import { Guild } from "discord.js";
 // @ts-ignore
 import { clientID, guildID, token } from "../config.json";
 import fs from "fs";
+import logger from "./logger";
 
 class OnStart {
    /**
@@ -64,7 +65,7 @@ class OnStart {
       const rest = new REST({ version: "9" }).setToken(token);
       (async () => {
          try {
-            console.log(
+            logger.info(
                `Started refreshing application (/) commands for ${guild.name}`
             );
 
@@ -81,11 +82,11 @@ class OnStart {
                });
             }
 
-            console.log(
+            logger.info(
                `Successfully reloaded application (/) commands for ${guild.name}`
             );
          } catch (error) {
-            console.error(error);
+            logger.error(error);
          }
       })();
    }
@@ -96,7 +97,7 @@ class OnStart {
     * @param guild - Guild object
     */
    deleteRegisteredCommands(clientID: string, guild: Guild) {
-      console.log("Deleting slash commands for " + guild.name);
+      logger.info("Deleting slash commands for " + guild.name);
       const rest = new REST({ version: "9" }).setToken(token);
       rest
          .get(Routes.applicationGuildCommands(clientID, guild.id))
@@ -110,7 +111,7 @@ class OnStart {
                // @ts-ignore
                promises.push(rest.delete(deleteUrl));
             }
-            console.log("Finished deleting slash commands for " + guild.name);
+            logger.info("Finished deleting slash commands for " + guild.name);
             return Promise.all(promises);
          });
    }

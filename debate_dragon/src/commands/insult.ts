@@ -1,6 +1,7 @@
 import { CommandInteraction, Interaction } from "discord.js";
 import { SlashCommandBuilder } from "@discordjs/builders";
 import axios from "axios";
+import logger from "../logger";
 
 module.exports = {
    data: new SlashCommandBuilder()
@@ -16,13 +17,11 @@ module.exports = {
       ),
 
    async execute(interaction: CommandInteraction) {
-      console.log("defering reply");
       await interaction.deferReply();
-      console.log("defered reply");
       let author = interaction.options.getUser("user")?.id;
       // if I am being insulted, don't
       if (author == "652511543845453855") {
-         console.log("I am being insulted, this will not fly");
+         logger.info("I am being insulted, this will not fly");
          // get the user that ran the command and insult them instead
          author = String(interaction.user.id);
       }
@@ -42,17 +41,13 @@ module.exports = {
 async function getInsult(): Promise<string> {
    try {
       // get insult back in plain text
-      console.log("getting insult from mattbas");
+      logger.debug("getting insult from mattbas");
       // throw new Error();
       let response = await axios.get("https://insult.mattbas.org/api/insult", {
          timeout: 5000,
       });
-      console.log(JSON.stringify(response.data, null, 3));
       return Promise.resolve(response.data);
    } catch (error) {
-      // console.log("Promise rejected");
-      // console.log(error);
-      // return Promise.reject(error);
       return Promise.resolve("fuck you");
    }
 }
