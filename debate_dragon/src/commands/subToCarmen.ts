@@ -4,6 +4,7 @@ import { writeToConfig } from "../utils";
 import { QuickDB } from "quick.db";
 import { IConfig } from "../types/config";
 import { getChannelByName } from "../utils";
+import logger from "../logger";
 
 const db = new QuickDB();
 
@@ -70,27 +71,39 @@ module.exports = {
          client,
          config.carmenRambles.channelName
       );
+      logger.debug(`channel to send name: ${channelToSend?.name}`);
+
       // if not channel found, then its a config error most likely
       if (!channelToSend) {
-         console.log(
+         logger.error(
             "Please spesify the channel to send notifications in config.json"
          );
          return;
       }
-      const lastNotificationTime: Date | null = await db.get(dbLabel);
+      const lastNotificationTime: Date | null = new Date(
+         (await db.get(dbLabel)) as string
+      );
+      let timeDifference =
+         currentTime.getMinutes() - lastNotificationTime.getMinutes();
       // if less than 1 hour has passed since the last notification, do nothing
+      // only check this in production
       if (
          lastNotificationTime &&
-         lastNotificationTime.getHours() - currentTime.getHours() < 1
+         timeDifference < 60 &&
+         config.development == false
       ) {
          // this means carmen is still rambling, so don't keep notifying user of this
          await db.set(dbLabel, currentTime);
+         logger.info(
+            `Less than an hour has passed since last notification, doing nothing. Time passed: ${timeDifference} minutes`
+         );
          return;
       }
       // set current notification time
       await db.set(dbLabel, currentTime);
       let message = this.constructNotification(notificationUsers);
       channelToSend.send(message);
+      logger.info(`Sent notification to ${notificationUsers.length} users`);
    },
 
    /**

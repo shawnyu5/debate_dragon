@@ -9,4 +9,6 @@ export interface IConfig {
       // user id of carmen her self
       carmenId: string;
    };
+   logLevel: "debug" | "info" | "warn" | "error";
+   development: boolean;
 }

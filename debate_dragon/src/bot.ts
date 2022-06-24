@@ -56,41 +56,47 @@ client.on("messageCreate", async (message) => {
    if (message.author.id != config.carmenRambles.carmenId) {
       return;
    }
-
-   logger.info("Carmen sent a message");
    // 10 messages within 5 minutes will trigger a notification
    const dbMessageCreationTime = "carmenMessageTimeStamp";
    const dbCounterLabel = "carmenCounter";
    const messageCreationTime = message.createdAt;
-   const previousMessageTime: Date | null = await db.get(dbMessageCreationTime);
+   const previousMessageTime: Date | null = new Date(
+      (await db.get(dbMessageCreationTime)) as string
+   );
 
-   // if we have a previous message
-   if (previousMessageTime) {
-      // calculate the time difference between current message and previous
-      let timeDifference =
-         messageCreationTime.getMinutes() - previousMessageTime?.getMinutes();
-
-      // if both messages are send with in 5 mins, update counter
-      if (timeDifference < 5) {
-         let counter: number = (await db.get(dbCounterLabel)) as number;
-         db.set(dbCounterLabel, counter + 1);
-      } else {
-         // if time difference is greater than 5 mins, reset counter and last message creation time
-         db.set(dbCounterLabel, 0);
-         db.set(dbMessageCreationTime, messageCreationTime);
-         return;
-      }
-   } else {
-      // if no previous message, set counter to 0
+   // if no previous message, set counter to 0
+   if (!previousMessageTime) {
       await db.set(dbCounterLabel, 0);
       await db.set(dbMessageCreationTime, messageCreationTime);
       return;
    }
 
+   // calculate the time difference between current message and previous message
+   let timeDifference =
+      messageCreationTime.getMinutes() - previousMessageTime.getMinutes();
+
+   // if time difference is within 5 minutes, increment counter
+   if (timeDifference < 5) {
+      let counter: number = (await db.get(dbCounterLabel)) as number;
+      await db.set(dbCounterLabel, counter + 1);
+      logger.debug(`Counter updated: ${counter + 1}`);
+   } else {
+      // if time difference is greater than 5 mins, reset counter and last message creation time
+      db.set(dbCounterLabel, 0);
+      db.set(dbMessageCreationTime, messageCreationTime);
+      return;
+   }
+
+   // update the last message creation time in db
    db.set(dbMessageCreationTime, messageCreationTime);
-   if (((await db.get(dbCounterLabel)) as number) >= 10) {
+
+   logger.debug("Counter label from db: " + (await db.get(dbCounterLabel)));
+   // if counter from db is greater than 3, send notification
+   if (((await db.get(dbCounterLabel)) as number) >= 3) {
       const subToCarmen = require("./commands/subToCarmen");
       subToCarmen.sendNotification(client);
+      db.set(dbCounterLabel, 0);
+      db.set(dbMessageCreationTime, messageCreationTime);
    }
 });
 
