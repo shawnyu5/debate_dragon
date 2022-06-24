@@ -28,12 +28,15 @@ jobs:
            uses: appleboy/ssh-action@master
            with:
               # The hostname or the IP address
-              host: ${{ secrets.SSH_HOST }}
+              host: ${{ secrets.HOST }}
               # The SSH username
-              username: ${{ secrets.SSH_USER }}
-              password: ${{ secrets.SSH_PASSWORD }}
+              username: ${{ secrets.USER }}
+              password: ${{ secrets.PASSWORD }}
               script: |
-                 cd discord_bots/debate_dragon
+                 cd penguin_bots
                  git pull -f
-                 npm install
-                 pm2 restart debate_dragon
+                 cd server && go build
+                 cd ../product_logger && go build
+                 pm2 reload penguin_server
+                 pm2 reload penguin\ bot
+                 pm2 reload penguin_logger
