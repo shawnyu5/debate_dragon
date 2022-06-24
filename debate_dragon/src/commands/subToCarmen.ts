@@ -84,7 +84,7 @@ module.exports = {
          lastNotificationTime.getHours() - currentTime.getHours() < 1
       ) {
          // this means carmen is still rambling, so don't keep notifying user of this
-         // await db.set(dbLabel, currentTime);
+         await db.set(dbLabel, currentTime);
          return;
       }
       // set current notification time

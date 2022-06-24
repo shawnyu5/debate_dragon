@@ -6,5 +6,7 @@ export interface IConfig {
       subscribers: Array<string>;
       // the channel name to send notifications too.
       channelName: string;
+      // user id of carmen her self
+      carmenId: string;
    };
 }

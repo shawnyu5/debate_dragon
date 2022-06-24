@@ -9,6 +9,7 @@ require("dotenv").config();
 import fs from "fs";
 import { OnStart } from "./deploy-commands";
 import config from "../config.json";
+import { QuickDB } from "quick.db";
 
 declare module "discord.js" {
    export interface Client {
@@ -34,6 +35,7 @@ for (const file of commandFiles) {
 }
 
 let onStart = new OnStart();
+let db = new QuickDB();
 client.on("ready", () => {
    console.log(`${client.user?.tag} logged in`);
    client.guilds.cache.forEach((guild) => {
@@ -49,7 +51,43 @@ client.on("ready", () => {
 });
 
 client.on("messageCreate", async (message) => {
-   console.log(message.content);
+   // if message is sent by carmen
+   if (message.author.id != config.carmenRambles.carmenId) {
+      return;
+   }
+   // 10 messages within 5 minutes will trigger a notification
+   const dbMessageCreationTime = "carmenMessageTimeStamp";
+   const dbCounterLabel = "carmenCounter";
+   const messageCreationTime = message.createdAt;
+   const previousMessageTime: Date | null = await db.get(dbMessageCreationTime);
+   // if we have a previous message
+   if (previousMessageTime) {
+      // calculate the time differnce between current message and previous
+      let timeDifference =
+         messageCreationTime.getMinutes() - previousMessageTime?.getMinutes();
+      // if both messages are send with in 5 mins, update counter
+      if (timeDifference < 5) {
+         let counter: number = (await db.get(dbCounterLabel)) as number;
+         db.set(dbCounterLabel, counter + 1);
+      } else {
+         // if time difference is greater than 5 mins, reset counter and last message creation time
+         db.set(dbCounterLabel, 0);
+         db.set(dbMessageCreationTime, messageCreationTime);
+         return;
+      }
+   } else {
+      // if no previous message, set counter to 0
+      await db.set(dbCounterLabel, 0);
+      await db.set(dbMessageCreationTime, messageCreationTime);
+      return;
+   }
+
+   db.set(dbMessageCreationTime, messageCreationTime);
+   console.log("Carmen sent a message");
+   if (((await db.get(dbCounterLabel)) as number) >= 10) {
+      const subToCarmen = require("./commands/subToCarmen");
+      subToCarmen.sendNotification(client);
+   }
 });
 
 client.on("interactionCreate", async (interaction: Interaction) => {
@@ -69,7 +107,7 @@ client.on("interactionCreate", async (interaction: Interaction) => {
    }
 });
 
-client.on("guildCreate", function (guild) {
+client.on("guildCreate", function(guild) {
    onStart.readAllGuildCommands();
    onStart.readGlobalCommands();
    onStart.registerCommands(
