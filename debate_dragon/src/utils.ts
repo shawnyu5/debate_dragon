@@ -65,3 +65,13 @@ export function getChannelByName(
    });
    return channel as TextChannel;
 }
+
+/**
+ * search for a channel by id
+ * @param client - discord client
+ * @param channelId - id of channel to search for
+ * @returns channel object
+ */
+export function getChannelById(client: Client, channelId: string): TextChannel {
+   return client.channels.cache.get(channelId) as TextChannel;
+}

@@ -3,7 +3,7 @@ import { Client, CommandInteraction } from "discord.js";
 import { writeToConfig } from "../utils";
 import { QuickDB } from "quick.db";
 import { IConfig } from "../types/config";
-import { getChannelByName } from "../utils";
+import { getChannelById } from "../utils";
 import logger from "../logger";
 
 const db = new QuickDB();
@@ -67,10 +67,11 @@ module.exports = {
       const notificationUsers = config.carmenRambles.subscribers;
       const currentTime = new Date();
 
-      const channelToSend = getChannelByName(
-         client,
-         config.carmenRambles.channelName
-      );
+      // const channelToSend = getChannelByName(
+      // client,
+      // config.carmenRambles.channelName
+      // );
+      const channelToSend = getChannelById(client, "990327189499170826");
       logger.debug(`channel to send name: ${channelToSend?.name}`);
 
       // if not channel found, then its a config error most likely
