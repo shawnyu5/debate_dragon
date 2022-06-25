@@ -67,11 +67,10 @@ module.exports = {
       const notificationUsers = config.carmenRambles.subscribers;
       const currentTime = new Date();
 
-      // const channelToSend = getChannelByName(
-      // client,
-      // config.carmenRambles.channelName
-      // );
-      const channelToSend = getChannelById(client, "990327189499170826");
+      const channelToSend = getChannelById(
+         client,
+         config.carmenRambles.channelId
+      );
       logger.debug(`channel to send name: ${channelToSend?.name}`);
 
       // if not channel found, then its a config error most likely
