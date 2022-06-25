@@ -21,28 +21,25 @@ export default {
 
    execute: async function (interaction: CommandInteraction): Promise<void> {
       let userInput = interaction.options.get("command")?.value as string;
-      if (userInput) {
-         let helpDocs: Array<IHelp> = readAllHelpDocs();
-         logger.debug("helpDocs: " + JSON.stringify(helpDocs));
+      let helpDocs: Array<IHelp> = readAllHelpDocs();
 
-         // go through all help docs and find the one the user is looking for
-         helpDocs.forEach((doc) => {
-            if (doc && doc.name == userInput) {
-               let reply = new MessageEmbed()
-                  .setColor("RANDOM")
-                  .setTitle("Help").setDescription(`
+      // go through all help docs and find the one the user is looking for
+      for (let i = 0; i < helpDocs.length; i++) {
+         let doc = helpDocs[i];
+         if (doc && doc.name == userInput) {
+            let reply = new MessageEmbed().setColor("RANDOM").setTitle("Help")
+               .setDescription(`
    Command name: ${doc.name}
    Description: ${doc.description}
    Usage: \`${doc.usage}\`
    `);
-               interaction.reply({ embeds: [reply] });
-               logger.info(`${userInput} help requested`);
-            }
-         });
-      } else {
-         interaction.reply("Command not found");
-         logger.info("Help command called with a invalid command");
+            interaction.reply({ embeds: [reply] });
+            logger.info(`${userInput} help requested`);
+            return;
+         }
       }
+      interaction.reply(`Command \`${userInput}\`  not found`);
+      logger.info("Help command called with a invalid command");
    },
    help: {
       name: "help",
