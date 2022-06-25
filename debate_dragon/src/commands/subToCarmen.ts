@@ -5,7 +5,6 @@ import { QuickDB } from "quick.db";
 import { IConfig } from "../types/config";
 import { getChannelById } from "../utils";
 import logger from "../logger";
-import ICommand from "../types/command";
 
 const db = new QuickDB();
 

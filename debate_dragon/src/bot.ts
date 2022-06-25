@@ -66,6 +66,7 @@ client.on("messageCreate", async (message) => {
    if (message.author.id != config.carmenRambles.carmenId) {
       return;
    }
+   logger.info("carmen message: " + message.content);
    // 10 messages within 5 minutes will trigger a notification
    const dbMessageCreationTime = "carmenMessageTimeStamp";
    const dbCounterLabel = "carmenCounter";
@@ -89,7 +90,7 @@ client.on("messageCreate", async (message) => {
    if (timeDifference < 5) {
       let counter: number = (await db.get(dbCounterLabel)) as number;
       await db.set(dbCounterLabel, counter + 1);
-      logger.debug(`Counter updated: ${counter + 1}`);
+      logger.info(`Counter updated: ${counter + 1}`);
    } else {
       // if time difference is greater than 5 mins, reset counter and last message creation time
       db.set(dbCounterLabel, 0);
@@ -100,10 +101,10 @@ client.on("messageCreate", async (message) => {
    // update the last message creation time in db
    db.set(dbMessageCreationTime, messageCreationTime);
 
-   logger.debug("Counter label from db: " + (await db.get(dbCounterLabel)));
+   logger.info("Counter label from db: " + (await db.get(dbCounterLabel)));
    // if counter from db is greater than 10, send notification
-   if (((await db.get(dbCounterLabel)) as number) >= 3) {
-      const subToCarmen = require("./commands/subToCarmen");
+   if (((await db.get(dbCounterLabel)) as number) >= 10) {
+      const subToCarmen = require("./commands/subToCarmen").default;
       subToCarmen.sendNotification(client);
       db.set(dbCounterLabel, 0);
       db.set(dbMessageCreationTime, messageCreationTime);
