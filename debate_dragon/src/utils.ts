@@ -92,3 +92,12 @@ export function readAllHelpDocs(): Array<IHelp> {
    }
    return helpDocs;
 }
+
+/**
+ * convert ms to mins
+ * @param ms - number of milliseconds to convert
+ * @returns minutes represenation of the ms
+ */
+export function msToMins(ms: number): number {
+   return Math.floor(ms / 60000);
+}

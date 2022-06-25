@@ -1,6 +1,6 @@
 import { SlashCommandBuilder } from "@discordjs/builders";
 import { Client, CommandInteraction } from "discord.js";
-import { writeToConfig } from "../utils";
+import { writeToConfig, msToMins } from "../utils";
 import { QuickDB } from "quick.db";
 import { IConfig } from "../types/config";
 import { getChannelById } from "../utils";
@@ -63,7 +63,7 @@ export default {
     */
    async sendNotification(client: Client) {
       const config: IConfig = require("../../config.json");
-      const dbLabel = "carmenLastNotification";
+      const dbLastNotificationLabel = "carmenLastNotification";
       const notificationUsers = config.carmenRambles.subscribers;
       const currentTime = new Date();
 
@@ -81,21 +81,23 @@ export default {
          return;
       }
       const lastNotificationTime: Date | null = new Date(
-         (await db.get(dbLabel)) as string
+         (await db.get(dbLastNotificationLabel)) as string
       );
+      logger.debug(`last notification time: ${lastNotificationTime}`);
+
       let timeDifference =
-         currentTime.getMinutes() - lastNotificationTime.getMinutes();
+         currentTime.getTime() - lastNotificationTime.getTime();
+
+      timeDifference = msToMins(timeDifference);
+      logger.debug(`time difference in mins: ${timeDifference}`);
+
       // if less than 1 hour has passed since the last notification, do nothing
       // only check this in production
-      if (
-         lastNotificationTime &&
-         timeDifference < 60 &&
-         config.development == false
-      ) {
+      if (timeDifference < 60 && config.development == false) {
          // this means carmen is still rambling, so don't keep notifying user of this
-         await db.set(dbLabel, currentTime);
+         await db.set(dbLastNotificationLabel, currentTime);
          logger.info(
-            `Less than an hour has passed since last notification, doing nothing. Time passed: ${timeDifference} minutes`
+            `Less than 60 mins has passed since last notification, doing nothing. Time passed: ${timeDifference} minutes`
          );
          logger.info(
             `Updated last notification time with current time: ${currentTime}`
@@ -103,7 +105,7 @@ export default {
          return;
       }
       // set current notification time
-      await db.set(dbLabel, currentTime);
+      await db.set(dbLastNotificationLabel, currentTime);
       let message = this.constructNotification(notificationUsers);
       channelToSend.send(message);
       logger.info(`Sent notification to ${notificationUsers.length} users`);
