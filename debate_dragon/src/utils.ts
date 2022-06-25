@@ -2,6 +2,7 @@ import Jimp from "jimp";
 import fs from "fs";
 import path from "path";
 import { Client, TextChannel } from "discord.js";
+import { IHelp } from "./types/help";
 
 export async function textOverlay(text: string): Promise<any> {
    // Reading image
@@ -74,4 +75,20 @@ export function getChannelByName(
  */
 export function getChannelById(client: Client, channelId: string): TextChannel {
    return client.channels.cache.get(channelId) as TextChannel;
+}
+
+/**
+ * read all help docs from command modules and store in array
+ * @returns json array of help docs
+ */
+export function readAllHelpDocs(): Array<IHelp> {
+   const helpDocs: Array<IHelp> = [];
+   const commandFiles = fs
+      .readdirSync(__dirname + "/commands")
+      .filter((file: string) => file.endsWith(".js"));
+   for (const file of commandFiles) {
+      const command = require(`${__dirname}/commands/${file}`);
+      helpDocs.push(command.default?.help);
+   }
+   return helpDocs;
 }

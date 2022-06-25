@@ -2,8 +2,9 @@ import { CommandInteraction, Interaction } from "discord.js";
 import { SlashCommandBuilder } from "@discordjs/builders";
 import axios from "axios";
 import logger from "../logger";
+import ICommand from "../types/command";
 
-module.exports = {
+export default {
    data: new SlashCommandBuilder()
       .setName("insult")
       .setDescription("Ping someone and insult them")
@@ -16,7 +17,7 @@ module.exports = {
             .setRequired(true)
       ),
 
-   async execute(interaction: CommandInteraction) {
+   execute: async function (interaction: CommandInteraction) {
       await interaction.deferReply();
       let author = interaction.options.getUser("user")?.id;
       // if I am being insulted, don't
@@ -33,7 +34,13 @@ module.exports = {
       }
       await interaction.editReply(`<@${author}> ${insult}`);
    },
-};
+   help: {
+      name: "insult",
+      description: "Ping someone and insult them",
+      usage: "/insult user: <user>",
+   },
+} as ICommand;
+
 /**
  * get a insult from insult.mattbas.org/api/
  * @return {Promise} An insult in plain text
