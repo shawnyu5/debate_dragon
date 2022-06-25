@@ -97,6 +97,9 @@ module.exports = {
          logger.info(
             `Less than an hour has passed since last notification, doing nothing. Time passed: ${timeDifference} minutes`
          );
+         logger.info(
+            `Updated last notification time with current time: ${currentTime}`
+         );
          return;
       }
       // set current notification time

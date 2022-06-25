@@ -91,8 +91,8 @@ client.on("messageCreate", async (message) => {
    db.set(dbMessageCreationTime, messageCreationTime);
 
    logger.debug("Counter label from db: " + (await db.get(dbCounterLabel)));
-   // if counter from db is greater than 3, send notification
-   if (((await db.get(dbCounterLabel)) as number) >= 3) {
+   // if counter from db is greater than 10, send notification
+   if (((await db.get(dbCounterLabel)) as number) >= 10) {
       const subToCarmen = require("./commands/subToCarmen");
       subToCarmen.sendNotification(client);
       db.set(dbCounterLabel, 0);
