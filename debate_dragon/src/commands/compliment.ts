@@ -1,8 +1,9 @@
 import { SlashCommandBuilder } from "@discordjs/builders";
 import axios from "axios";
 import { CommandInteraction, Interaction } from "discord.js";
+import ICommand from "../types/command";
 
-module.exports = {
+export default {
    data: new SlashCommandBuilder()
       .setName("compliment")
       .setDescription("Ping someone and compliment them")
@@ -19,7 +20,12 @@ module.exports = {
       let compliment: string = await getCompliment();
       await interaction.editReply(`<@${target}> ${compliment}`);
    },
-};
+   help: {
+      name: "compliment",
+      description: "Ping someone and compliment them",
+      usage: "/compliment user: <user>",
+   },
+} as ICommand;
 
 /**
  * @returns a compliment in plain text

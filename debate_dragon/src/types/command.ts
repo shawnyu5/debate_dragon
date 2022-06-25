@@ -9,4 +9,5 @@ export default interface ICommand {
       description: string;
       usage: string;
    };
+   [otherOptions: string]: unknown;
 }
