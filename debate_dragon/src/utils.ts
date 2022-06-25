@@ -1,6 +1,7 @@
-import { Interaction } from "discord.js";
 import Jimp from "jimp";
-import IArgs from "./types/args";
+import fs from "fs";
+import path from "path";
+import { Client, TextChannel } from "discord.js";
 
 export async function textOverlay(text: string): Promise<any> {
    // Reading image
@@ -38,11 +39,39 @@ export async function textOverlay(text: string): Promise<any> {
 }
 
 /**
- * removes the prefix from a command
- * @param command - The command prefix
- * @param message - the command string
- * @returns - the command string without the prefix
+ * write a key value pair to config.json
+ * @param newConfig - the config object to write to file
  */
-export function removeCommandPrefix(command: string, message: string): string {
-   return message.replace(command, "");
+export function writeToConfig(newConfig: any): void {
+   fs.writeFileSync(
+      path.resolve(__dirname + "/../config.json"),
+      JSON.stringify(newConfig, null, 2)
+   );
+}
+
+/**
+ * Search for a channel by name
+ * @param client - discord client
+ * @param channelName - name of channel to search for
+ * @returns channel object
+ */
+export function getChannelByName(
+   client: Client,
+   channelName: string
+): TextChannel | undefined {
+   const channel = client.channels.cache.find((ch) => {
+      // @ts-ignore
+      return ch.name == channelName;
+   });
+   return channel as TextChannel;
+}
+
+/**
+ * search for a channel by id
+ * @param client - discord client
+ * @param channelId - id of channel to search for
+ * @returns channel object
+ */
+export function getChannelById(client: Client, channelId: string): TextChannel {
+   return client.channels.cache.get(channelId) as TextChannel;
 }
