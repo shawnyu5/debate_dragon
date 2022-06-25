@@ -57,13 +57,10 @@ client.on("ready", () => {
 });
 
 client.on("interactionCreate", async (interaction: Interaction) => {
-   console.log("(anon)interaction create"); // __AUTO_GENERATED_PRINTF__
    if (!interaction.isCommand()) return;
    const command = client.commands.get(interaction.commandName);
-   console.log("(anon) command: %s", command); // __AUTO_GENERATED_PRINT_VAR__
 
    if (!command) return;
-   console.log("is not command"); // __AUTO_GENERATED_PRINTF__
 
    try {
       await command.default.execute(interaction);
@@ -85,12 +82,6 @@ client.on("guildCreate", function (guild) {
       onStart.guildCommands,
       false
    );
-   // onStart.registerCommands(
-   // config.clientID,
-   // guild,
-   // onStart.guildCommands,
-   // true
-   // );
 });
 
 client.login(require("../config.json").token);
