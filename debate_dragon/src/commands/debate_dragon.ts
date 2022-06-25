@@ -15,13 +15,15 @@ module.exports = {
    async execute(interaction: CommandInteraction) {
       await interaction.deferReply();
       let userMessage = interaction.options.get("message")?.value as string;
-      logger.debug("User message length: ", userMessage.length); // __AUTO_GENERATED_PRINT_VAR__
+      logger.debug("User message length: " + userMessage.length); // __AUTO_GENERATED_PRINT_VAR__
       if (userMessage.length > 30) {
          logger.debug("userMessage too long, cutting short");
          userMessage = userMessage.substring(0, 30);
       }
 
-      logger.info("Replied with dragon picture and user message:", userMessage);
+      logger.info(
+         "Replied with dragon picture and user message: " + userMessage
+      );
       await textOverlay(userMessage);
       await interaction.editReply({
          files: ["media/img/done.png"],
