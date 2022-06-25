@@ -33,10 +33,7 @@ jobs:
               username: ${{ secrets.USER }}
               password: ${{ secrets.PASSWORD }}
               script: |
-                 cd penguin_bots
-                 git pull -f
-                 cd server && go build
-                 cd ../product_logger && go build
-                 pm2 reload penguin_server
-                 pm2 reload penguin\ bot
-                 pm2 reload penguin_logger
+                cd discord_bots/debate_dragon
+                rm json.sqlite # Should I reset the database??
+                git pull -f
+                pm2 restart debate_dragon
