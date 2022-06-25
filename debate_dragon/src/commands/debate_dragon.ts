@@ -32,4 +32,9 @@ export default {
          "Replied with dragon picture and user message: " + userMessage
       );
    },
+   help: {
+      name: "dd",
+      description: "Summons a dragon to burn your debate fows to the ground",
+      usage: "/dd message: <message>",
+   },
 } as ICommand;

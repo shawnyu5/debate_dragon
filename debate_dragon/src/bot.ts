@@ -34,13 +34,16 @@ const commandFiles = fs
 // }
 
 for (const file of commandFiles) {
-   // const command = require(`./commands/${file}`);
+   const command = require(`./commands/${file}`);
    // Set a new item in the Collection
    // With the key as the command name and the value as the exported module
-   // client.commands.set(command.data.name, command);
+   client.commands.set(command.default?.data.name, command);
 }
-const command = require(`${__dirname}/commands/debate_dragon.js`);
-client.commands.set(command.default.data.name, command);
+// const command = require(`${__dirname}/commands/debate_dragon.js`);
+// client.commands.set(command.default.data.name, command);
+
+// const command2 = require(`${__dirname}/commands/help.js`);
+// client.commands.set(command2.default.data.name, command2);
 
 let onStart = new OnStart();
 let db = new QuickDB();

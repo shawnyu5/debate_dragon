@@ -27,7 +27,6 @@ export default {
 
          // go through all help docs and find the one the user is looking for
          helpDocs.forEach((doc) => {
-            console.log("if#(anon) doc: %s", doc); // __AUTO_GENERATED_PRINT_VAR__
             if (doc && doc.name == userInput) {
                let reply = new MessageEmbed()
                   .setColor("RANDOM")
