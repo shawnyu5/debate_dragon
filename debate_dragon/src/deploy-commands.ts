@@ -27,9 +27,15 @@ class OnStart {
          .filter((file: string) => file.endsWith(".js"));
 
       for (const file of commandFiles) {
-         const command = require(`${__dirname}/commands/${file}`);
-         commands.push(command.data.toJSON());
+         // const command = require(`${__dirname}/commands/${file}`);
+         // commands.push(command.data.toJSON());
       }
+      const command = require(`${__dirname}/commands/debate_dragon.js`);
+      commands.push(command.default.data.toJSON());
+      console.log(
+         "OnStart#readAllGuildCommands command.default.data.toJSON(): %s",
+         command.default.data.toJSON()
+      ); // __AUTO_GENERATED_PRINT_VAR__
       this.guildCommands = commands;
    }
 

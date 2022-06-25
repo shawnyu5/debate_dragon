@@ -27,12 +27,19 @@ const commandFiles = fs
    .readdirSync(__dirname + "/commands")
    .filter((file: string) => file.endsWith(".js"));
 
+// for (const file of commandFiles) {
+// const command = require(`${__dirname}/commands/global/${file}`);
+// commands.push(command.data.toJSON());
+// }
+
 for (const file of commandFiles) {
-   const command = require(`./commands/${file}`);
+   // const command = require(`./commands/${file}`);
    // Set a new item in the Collection
    // With the key as the command name and the value as the exported module
-   client.commands.set(command.data.name, command);
+   // client.commands.set(command.data.name, command);
 }
+const command = require(`${__dirname}/commands/debate_dragon.js`);
+client.commands.set(command.default.data.name, command);
 
 let onStart = new OnStart();
 client.on("ready", () => {
@@ -50,15 +57,18 @@ client.on("ready", () => {
 });
 
 client.on("interactionCreate", async (interaction: Interaction) => {
+   console.log("(anon)interaction create"); // __AUTO_GENERATED_PRINTF__
    if (!interaction.isCommand()) return;
    const command = client.commands.get(interaction.commandName);
+   console.log("(anon) command: %s", command); // __AUTO_GENERATED_PRINT_VAR__
 
    if (!command) return;
+   console.log("is not command"); // __AUTO_GENERATED_PRINTF__
 
    try {
-      await command.execute(interaction);
+      await command.default.execute(interaction);
    } catch (error: any) {
-      console.error(error);
+      logger.error(error);
       await interaction.reply({
          content: error.toString(),
          ephemeral: true,
@@ -68,7 +78,7 @@ client.on("interactionCreate", async (interaction: Interaction) => {
 
 client.on("guildCreate", function (guild) {
    onStart.readAllGuildCommands();
-   onStart.readGlobalCommands();
+   // onStart.readGlobalCommands();
    onStart.registerCommands(
       config.clientID,
       guild,
