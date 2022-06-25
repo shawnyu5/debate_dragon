@@ -28,12 +28,22 @@ const commandFiles = fs
    .readdirSync(__dirname + "/commands")
    .filter((file: string) => file.endsWith(".js"));
 
+// for (const file of commandFiles) {
+// const command = require(`${__dirname}/commands/global/${file}`);
+// commands.push(command.data.toJSON());
+// }
+
 for (const file of commandFiles) {
    const command = require(`./commands/${file}`);
    // Set a new item in the Collection
    // With the key as the command name and the value as the exported module
-   client.commands.set(command.data.name, command);
+   client.commands.set(command.default?.data.name, command);
 }
+// const command = require(`${__dirname}/commands/debate_dragon.js`);
+// client.commands.set(command.default.data.name, command);
+
+// const command2 = require(`${__dirname}/commands/help.js`);
+// client.commands.set(command2.default.data.name, command2);
 
 let onStart = new OnStart();
 let db = new QuickDB();
@@ -107,9 +117,9 @@ client.on("interactionCreate", async (interaction: Interaction) => {
    if (!command) return;
 
    try {
-      await command.execute(interaction);
+      await command.default.execute(interaction);
    } catch (error: any) {
-      console.error(error);
+      logger.error(error);
       await interaction.reply({
          content: error.toString(),
          ephemeral: true,
@@ -119,19 +129,13 @@ client.on("interactionCreate", async (interaction: Interaction) => {
 
 client.on("guildCreate", function (guild) {
    onStart.readAllGuildCommands();
-   onStart.readGlobalCommands();
+   // onStart.readGlobalCommands();
    onStart.registerCommands(
       config.clientID,
       guild,
       onStart.guildCommands,
       false
    );
-   // onStart.registerCommands(
-   // config.clientID,
-   // guild,
-   // onStart.guildCommands,
-   // true
-   // );
 });
 
 client.login(require("../config.json").token);

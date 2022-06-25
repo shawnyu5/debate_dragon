@@ -5,10 +5,11 @@ import { QuickDB } from "quick.db";
 import { IConfig } from "../types/config";
 import { getChannelById } from "../utils";
 import logger from "../logger";
+import ICommand from "../types/command";
 
 const db = new QuickDB();
 
-module.exports = {
+export default {
    data: new SlashCommandBuilder()
       .setName("subforcarmen")
       .setDescription("Subscribes to Carmen's ramblings for free!")
@@ -19,7 +20,7 @@ module.exports = {
             .setRequired(true);
       }),
 
-   async execute(interaction: CommandInteraction) {
+   execute: async function (interaction: CommandInteraction) {
       await interaction.deferReply();
       let subscription = interaction.options.get("subscription")
          ?.value as boolean;
@@ -121,5 +122,10 @@ module.exports = {
       });
       message += " carmen is Rambling now!!!";
       return message;
+   },
+   help: {
+      name: "subforcarmen",
+      description: "subscribes to carmen's ramblings for free!",
+      usage: "/subforcarmen subscription: True | False",
    },
 };
