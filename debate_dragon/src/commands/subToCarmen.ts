@@ -148,7 +148,7 @@ export async function resetCounter(message: Message) {
       await db.set(dbMessageCreationTime, currentMessageTime);
       await db.set(dbCounterLabel, 0);
       logger.info(
-         `Reset carmen counter. More than 30 has passed since last message`
+         `Reset carmen counter. More than 30 mins has passed since last message`
       );
    }
 }
