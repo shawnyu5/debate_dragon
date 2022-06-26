@@ -66,6 +66,9 @@ client.on("messageCreate", async (message) => {
    if (message.author.id != config.carmenRambles.carmenId) {
       return;
    }
+
+   require("./commands/subToCarmen").resetCounter(message);
+
    logger.info("carmen message: " + message.content);
    // 10 messages within 5 minutes will trigger a notification
    const dbMessageCreationTime = "carmenMessageTimeStamp";

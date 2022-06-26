@@ -1,9 +1,8 @@
 import { SlashCommandBuilder } from "@discordjs/builders";
-import { Client, CommandInteraction } from "discord.js";
-import { writeToConfig, msToMins } from "../utils";
+import { Client, CommandInteraction, Message } from "discord.js";
+import { writeToConfig, msToMins, getChannelById } from "../utils";
 import { QuickDB } from "quick.db";
 import { IConfig } from "../types/config";
-import { getChannelById } from "../utils";
 import logger from "../logger";
 
 const db = new QuickDB();
@@ -130,3 +129,24 @@ export default {
       usage: "/subforcarmen subscription: True | False",
    },
 };
+
+/**
+ * if an hour has passed since the last carmen message, reset the last notification time to now
+ */
+export async function resetCounter(message: Message) {
+   const dbMessageCreationTime = "carmenMessageTimeStamp";
+   const dbCounterLabel = "carmenCounter";
+   const lastMessageTime: Date | null = new Date(
+      (await db.get(dbMessageCreationTime)) as string
+   );
+   const currentMessageTime = message.createdAt;
+
+   // TODO: use ms instead of mins in this calculation
+   if (currentMessageTime.getMinutes() - lastMessageTime.getMinutes() > 60) {
+      await db.set(dbMessageCreationTime, currentMessageTime);
+      await db.set(dbCounterLabel, 0);
+      logger.info(
+         `Reset carmen counter. More than 1 hour has passed since last message`
+      );
+   }
+}
