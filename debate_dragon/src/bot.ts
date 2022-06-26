@@ -63,8 +63,12 @@ client.on("ready", () => {
 
 client.on("messageCreate", async (message) => {
    require("./commands/subToCarmen").resetCounter(message);
-   // if message is not sent by carmen, ignore it
-   if (message.author.id != config.carmenRambles.carmenId) {
+   const carmenGuild = config.carmenRambles.guildID;
+   // if message is not sent by carmen, or not in the right guild, ignore it
+   if (
+      message.author.id != config.carmenRambles.carmenId ||
+      message.guildId != carmenGuild
+   ) {
       return;
    }
 
