@@ -109,7 +109,10 @@ client.on("messageCreate", async (message) => {
 
    logger.debug("Counter from db: " + (await db.get(dbCounterLabel)));
    // if counter from db is greater than 10, send notification
-   if (((await db.get(dbCounterLabel)) as number) >= 9) {
+   if (
+      ((await db.get(dbCounterLabel)) as number) >
+      config.carmenRambles.messageLimit
+   ) {
       const subToCarmen = require("./commands/subToCarmen").default;
       subToCarmen.sendNotification(client);
       // reset counter

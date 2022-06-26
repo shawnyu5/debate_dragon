@@ -9,7 +9,9 @@ export interface IConfig {
       // user id of carmen her self
       carmenId: string;
       // the guild id of the server to keep track of carmen messages
-      guildID: "755477320864890890";
+      guildID: string;
+      // the number of messages to trigger a notification
+      messageLimit: number;
    };
    logLevel: "debug" | "info" | "warn" | "error";
    development: boolean;
