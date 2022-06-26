@@ -62,26 +62,25 @@ client.on("ready", () => {
 });
 
 client.on("messageCreate", async (message) => {
+   require("./commands/subToCarmen").resetCounter(message);
    // if message is not sent by carmen, ignore it
    if (message.author.id != config.carmenRambles.carmenId) {
       return;
    }
 
-   require("./commands/subToCarmen").resetCounter(message);
-
    logger.info("carmen message: " + message.content);
    // 10 messages within 5 minutes will trigger a notification
-   const dbMessageCreationTime = "carmenMessageTimeStamp";
-   const dbCounterLabel = "carmenCounter";
+   const dbMessageTimeStamp = "carmen message time stamp";
+   const dbCounterLabel = "carmen message counter";
    const messageCreationTime = message.createdAt;
    const previousMessageTime: Date | null = new Date(
-      (await db.get(dbMessageCreationTime)) as string
+      (await db.get(dbMessageTimeStamp)) as string
    );
 
    // if no previous message, set counter to 0
    if (!previousMessageTime) {
       await db.set(dbCounterLabel, 0);
-      await db.set(dbMessageCreationTime, messageCreationTime);
+      await db.set(dbMessageTimeStamp, messageCreationTime);
       return;
    }
 
@@ -97,20 +96,22 @@ client.on("messageCreate", async (message) => {
    } else {
       // if time difference is greater than 5 mins, reset counter and last message creation time
       db.set(dbCounterLabel, 0);
-      db.set(dbMessageCreationTime, messageCreationTime);
+      db.set(dbMessageTimeStamp, messageCreationTime);
       return;
    }
 
    // update the last message creation time in db
-   db.set(dbMessageCreationTime, messageCreationTime);
+   db.set(dbMessageTimeStamp, messageCreationTime);
 
-   logger.debug("Counter label from db: " + (await db.get(dbCounterLabel)));
+   logger.debug("Counter from db: " + (await db.get(dbCounterLabel)));
    // if counter from db is greater than 10, send notification
    if (((await db.get(dbCounterLabel)) as number) >= 9) {
       const subToCarmen = require("./commands/subToCarmen").default;
       subToCarmen.sendNotification(client);
+      // reset counter
       db.set(dbCounterLabel, 0);
-      db.set(dbMessageCreationTime, messageCreationTime);
+      // set last message creation time to current time
+      db.set(dbMessageTimeStamp, messageCreationTime);
    }
 });
 
