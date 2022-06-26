@@ -131,7 +131,7 @@ export default {
 };
 
 /**
- * if an hour has passed since the last carmen message, reset the last notification time to now
+ * if 30 mins has passed since the last carmen message, reset the last notification time to now
  */
 export async function resetCounter(message: Message) {
    const dbMessageCreationTime = "carmenMessageTimeStamp";
@@ -141,12 +141,14 @@ export async function resetCounter(message: Message) {
    );
    const currentMessageTime = message.createdAt;
 
-   // TODO: use ms instead of mins in this calculation
-   if (currentMessageTime.getMinutes() - lastMessageTime.getMinutes() > 60) {
+   let timeDifference =
+      currentMessageTime.getTime() - lastMessageTime.getTime();
+   timeDifference = msToMins(timeDifference);
+   if (timeDifference > 30) {
       await db.set(dbMessageCreationTime, currentMessageTime);
       await db.set(dbCounterLabel, 0);
       logger.info(
-         `Reset carmen counter. More than 1 hour has passed since last message`
+         `Reset carmen counter. More than 30 has passed since last message`
       );
    }
 }
