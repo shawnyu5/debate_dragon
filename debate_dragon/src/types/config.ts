@@ -12,6 +12,10 @@ export interface IConfig {
       guildID: string;
       // the number of messages to trigger a notification
       messageLimit: number;
+      // carmen subscriber role id. The role to ping when she starts rambling
+      subscribersRoleID: "991000363408719953";
+      // number of minutes to wait before sending a notification
+      coolDown: 60;
    };
    logLevel: "debug" | "info" | "warn" | "error";
    development: boolean;
