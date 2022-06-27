@@ -1,16 +1,11 @@
-import {
-   Client,
-   Collection,
-   CommandInteraction,
-   Intents,
-   Interaction,
-} from "discord.js";
+import { Client, Collection, Intents, Interaction } from "discord.js";
 require("dotenv").config();
 import fs from "fs";
 import { OnStart } from "./deploy-commands";
 import config from "../config.json";
 import { QuickDB } from "quick.db";
 import logger from "./logger";
+import * as carmen from "./commands/subToCarmen";
 
 declare module "discord.js" {
    export interface Client {
@@ -62,7 +57,8 @@ client.on("ready", () => {
 });
 
 client.on("messageCreate", async (message) => {
-   require("./commands/subToCarmen").resetCounter(message);
+   await carmen.resetCounter(message);
+   // the guild id of the server to keep track of carmen messages
    const carmenGuild = config.carmenRambles.guildID;
    // if message is not sent by carmen, or not in the right guild, ignore it
    if (
@@ -77,7 +73,7 @@ client.on("messageCreate", async (message) => {
    const dbMessageTimeStamp = "carmen message time stamp";
    const dbCounterLabel = "carmen message counter";
    const messageCreationTime = message.createdAt;
-   const previousMessageTime: Date | null = new Date(
+   const previousMessageTime: Date = new Date(
       (await db.get(dbMessageTimeStamp)) as string
    );
 
@@ -109,13 +105,12 @@ client.on("messageCreate", async (message) => {
    db.set(dbMessageTimeStamp, messageCreationTime);
 
    logger.debug("Counter from db: " + (await db.get(dbCounterLabel)));
-   // if counter from db is greater than 10, send notification
+   // if counter from db is greater than message limit, send notification
    if (
       ((await db.get(dbCounterLabel)) as number) >
       config.carmenRambles.messageLimit
    ) {
-      const subToCarmen = require("./commands/subToCarmen").default;
-      subToCarmen.sendNotification(client);
+      carmen.sendNotification(client);
       // reset counter
       db.set(dbCounterLabel, 0);
       // set last message creation time to current time
