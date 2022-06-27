@@ -15,4 +15,7 @@ export interface IConfig {
    };
    logLevel: "debug" | "info" | "warn" | "error";
    development: boolean;
+   subForJohn: {
+      johnID: string;
+   };
 }

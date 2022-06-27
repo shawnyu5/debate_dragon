@@ -123,6 +123,20 @@ client.on("messageCreate", async (message) => {
    }
 });
 
+client.on("messageCreate", async (message) => {
+   // if (message.author.id != config.subForJohn.johnID) return;
+   const dbCounterLabel = "john message counter";
+   const counter = (await db.get(dbCounterLabel)) as number;
+
+   // if the message contains dick, increase counter
+   if (message.toString().indexOf("dick")) {
+      db.set(dbCounterLabel, counter + 1);
+   }
+
+   if (counter > config.subForJohn.messageLimit) {
+   }
+});
+
 client.on("interactionCreate", async (interaction: Interaction) => {
    if (!interaction.isCommand()) return;
    const command = client.commands.get(interaction.commandName);
