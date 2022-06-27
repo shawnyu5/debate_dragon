@@ -5,7 +5,7 @@ COPY package*.json ./
 RUN npm install
 
 COPY ./src ./src
-COPY ./media ./media
+# COPY ./media ./media
 COPY ./tsconfig.json ./
 COPY ./config.json ./
 
@@ -18,7 +18,8 @@ WORKDIR /app
 COPY package*.json ./
 RUN npm install --omit=dev
 
-COPY --from=build ./app/build ./
+COPY --from=build ./app/build ./build
+COPY ./config.json ./
+COPY ./media/ ./media/
 
 CMD npm run run
-
