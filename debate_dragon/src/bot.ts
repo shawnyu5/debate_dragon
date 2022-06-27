@@ -99,6 +99,7 @@ client.on("messageCreate", async (message) => {
       logger.info(`Counter updated: ${counter + 1}`);
    } else {
       // if time difference is greater than 5 mins, reset counter and last message creation time
+      logger.info(`Counter reset. Time difference: ${timeDifference}`);
       db.set(dbCounterLabel, 0);
       db.set(dbMessageTimeStamp, messageCreationTime);
       return;
