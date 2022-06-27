@@ -3,7 +3,6 @@ export interface IConfig {
    clientID: string;
    guildID: string;
    carmenRambles: {
-      subscribers: Array<string>;
       // the channel id to send notifications too.
       channelId: string;
       // user id of carmen her self

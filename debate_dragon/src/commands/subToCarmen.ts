@@ -35,12 +35,16 @@ export default {
          await interaction.editReply(
             "Congrats, you have been subscribed to CarmenRambles!"
          );
+         logger.info(`User ${interaction.user.username} subscribed to carmen`);
       } else {
          // remove carmen subscriber role from user that executed the command
          // @ts-ignore
          await interaction.member?.roles.remove(carmenRole);
          await interaction.editReply(
-            "Congrats, you have been unsubscribed to CarmenRambles. Sorry to see you go..."
+            "You have been unsubscribed to CarmenRambles. Sorry to see you go..."
+         );
+         logger.info(
+            `User ${interaction.user.username} unsubscribed to carmen`
          );
       }
    },
