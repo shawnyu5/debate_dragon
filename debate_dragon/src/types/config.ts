@@ -19,6 +19,17 @@ export interface IConfig {
    logLevel: "debug" | "info" | "warn" | "error";
    development: boolean;
    subForJohn: {
+      // id of john
       johnID: string;
+      // channel to send the notification to
+      notificationChannelId: string;
+      // the guild id of the server to keep track of john messages
+      guildID: string;
+      // cool down in minutes
+      cooldown: number;
+      // the role id to ping for notifications
+      subscribersRoleID: string;
+      // the strings to look for to trigger a notification
+      words: Array<string>;
    };
 }

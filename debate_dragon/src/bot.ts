@@ -6,6 +6,8 @@ import config from "../config.json";
 import { QuickDB } from "quick.db";
 import logger from "./logger";
 import * as carmen from "./commands/subToCarmen";
+import * as john from "./commands/dicksForJohn";
+import { msToMins } from "./utils";
 
 declare module "discord.js" {
    export interface Client {
@@ -118,17 +120,53 @@ client.on("messageCreate", async (message) => {
    }
 });
 
+// For john
 client.on("messageCreate", async (message) => {
-   // if (message.author.id != config.subForJohn.johnID) return;
-   const dbCounterLabel = "john message counter";
-   const counter = (await db.get(dbCounterLabel)) as number;
-
-   // if the message contains dick, increase counter
-   if (message.toString().indexOf("dick")) {
-      db.set(dbCounterLabel, counter + 1);
+   if (message.author.bot) {
+      logger.info(`Bot message: ${message.content}. Ignoring`);
+      return;
    }
+   logger.info(`John message: ${message.content}`);
+   // if (message.author.id != config.subForJohn.johnID) return;
+   // const dbCounterLabel = "john message counter";
+   const dbMessageTimeStamp = "john notification time stamp";
+   const lastNotificationTime: Date = new Date(
+      (await db.get(dbMessageTimeStamp)) as string
+   );
+   // const counter = (await db.get(dbCounterLabel)) as number;
 
-   if (counter > config.subForJohn.messageLimit) {
+   let timeDifference = Date.now() - lastNotificationTime.getTime();
+   timeDifference = msToMins(timeDifference);
+   logger.info(`Time difference: ${timeDifference} mins`);
+
+   // if the message contains notification words,
+   if (john.containsWords(message)) {
+      // if the time difference is less than cool down cycle. Reset
+      // lastNotificationTime to avoid keeping sending notifications, and do
+      // nothing
+      // only check this is production
+      if (
+         timeDifference < config.subForJohn.cooldown &&
+         config.development === false
+      ) {
+         await db.set(dbMessageTimeStamp, new Date());
+         logger.info(
+            `lastNotificationTime rest. Time difference: ${timeDifference} mins`
+         );
+         return;
+      }
+      // else if john keeps saying those words, reset lastNotificationTime to now to avoid keeping sending notifications
+      // reset lastNotificationTime to now
+      await db.set(dbMessageTimeStamp, new Date());
+      john.sendNotification(client);
+      logger.info(`Notification sent. Time difference: ${timeDifference} mins`);
+   }
+   // if john keeps saying those words, reset lastNotificationTime to now, so we dont keep sending notifications
+   else if (john.containsWords(message)) {
+      await db.set(dbMessageTimeStamp, new Date());
+      logger.info(
+         `Notification reset. Time difference: ${timeDifference} mins`
+      );
    }
 });
 
