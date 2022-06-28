@@ -33,7 +33,10 @@ jobs:
               username: ${{ secrets.USER }}
               password: ${{ secrets.PASSWORD }}
               script: |
-                cd discord_bots/debate_dragon
-                rm json.sqlite # Should I reset the database??
-                git pull -f
-                pm2 restart debate_dragon
+                 cd discord_bots/debate_dragon
+                 rm json.sqlite # Should I reset the database??
+                 git pull -f
+                 docker-compose up --force-recreate --build -d
+                 docker image prune -f
+
+                 # pm2 restart debate_dragon

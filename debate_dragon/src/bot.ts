@@ -146,4 +146,4 @@ client.on("guildCreate", function (guild) {
    );
 });
 
-client.login(require("../config.json").token);
+client.login(config.token);

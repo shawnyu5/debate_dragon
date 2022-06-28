@@ -1,8 +1,8 @@
-FROM node:16.15 AS build
+FROM node:16.15.0 AS build
 
 WORKDIR /app
 COPY package*.json ./
-RUN npm install --verbose
+RUN npm ci --verbose
 
 COPY ./src ./src
 # COPY ./media ./media
@@ -11,12 +11,12 @@ COPY ./config.json ./
 
 RUN npm run build # produce /build
 
-FROM node:16.15-alpine AS production
+FROM node:16.15.0-alpine AS production
 
 WORKDIR /app
 
 COPY package*.json ./
-RUN npm install --omit=dev --verbose
+RUN npm ci --omit=dev --verbose
 
 COPY --from=build ./app/build ./build
 COPY ./config.json ./
