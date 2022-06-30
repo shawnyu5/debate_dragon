@@ -36,7 +36,7 @@ export default {
       for (let message of messages) {
          const isIvan = await isIvanMessage(message);
          isIvanArr.push(isIvan);
-         console.log("for_in isIvanArr: %s", isIvanArr); // __AUTO_GENERATED_PRINT_VAR__
+         logger.info(`Ivan array: ${isIvanArr}`); // __AUTO_GENERATED_PRINT_VAR__
       }
 
       let { truePercentage, falsePercentage } = calculateAverage(isIvanArr);
