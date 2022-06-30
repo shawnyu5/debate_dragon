@@ -35,5 +35,6 @@ jobs:
               script: |
                  cd discord_bots/debate_dragon
                  git pull -f
-                 npm install
-                 pm2 restart debate_dragon
+                 docker compose build
+                 docker compose up -d
+                 docker image prune -f
