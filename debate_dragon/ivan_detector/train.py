@@ -2,6 +2,7 @@ import json
 import random
 import pickle
 import sys
+import os
 from sklearn.svm import SVC
 from sklearn.feature_extraction.text import CountVectorizer
 from sklearn.model_selection import train_test_split
@@ -9,7 +10,8 @@ from sklearn.metrics import f1_score
 
 
 def train():
-    with open("./messages.json") as f:
+    # get directory of the current file
+    with open("/messages.json") as f:
         file = json.load(f)
 
     messages = process_data(file)
@@ -128,7 +130,7 @@ def load_model(filename):
     return pickle.load(open(filename, "rb"))
 
 
-def predict(message)-> list[int]:
+def main():
     with open("./messages.json") as f:
         file = json.load(f)
 
@@ -160,16 +162,18 @@ def predict(message)-> list[int]:
 
     svm.fit(train_x_vector, train_y)
 
-    user_input = vectorizer.transform([message])
-    return (svm.predict(user_input))
+    if len(sys.argv) > 1:
+        user_input = vectorizer.transform([sys.argv[1]])
+        print(svm.predict(user_input))
+        return
 
     # print(svm.predict(test_x_vector[9]))
 
-    # print(
-    # f1_score(test_y, svm.predict(test_x_vector), average=None, labels=[True, False])
-    # )
-    # save_model(svm, "model.pkl")
+    print(
+    f1_score(test_y, svm.predict(test_x_vector), average=None, labels=[True, False])
+    )
+    save_model(svm, "model.pkl")
 
 
-# if __name__ == "__main__":
-# main()
+if __name__ == "__main__":
+    main()
