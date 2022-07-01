@@ -35,6 +35,7 @@ jobs:
               script: |
                  cd discord_bots
                  git pull -f
+                 docker stop debate_dragon
                  docker rm debate_dragon
                  docker build -t debate_dragon .
                  docker run --name debate_dragon -d debate_dragon
