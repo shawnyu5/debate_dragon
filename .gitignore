@@ -2,3 +2,4 @@ media/img/done.png
 /build
 json.sqlite
 config.json
+node_modules/
