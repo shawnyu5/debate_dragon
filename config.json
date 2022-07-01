@@ -1,0 +1,29 @@
+{
+   "token": "OTg5NzE2NzM5NTE0MzIyOTk0.G2GyAj.v1nFyz2DTFwxwd3BE7ggzbX350s7JFDhIFJ1Eo",
+   "clientID": "989716739514322994",
+   "guildID": "704149356101500999",
+   "carmenRambles": {
+      "channelId": "940065144745132103",
+      "carmenId": "89r83w08430",
+      "guildID": "704149356101500999",
+      "messageLimit": 2,
+      "subscribersRoleID": "991000363408719953",
+      "coolDown": 60
+   },
+   "subForJohn": {
+      "johnID": "652511543845453855",
+      "notificationChannelId": "940065144745132103",
+      "guildID": "704149356101500999",
+      "cooldown": 10,
+      "subscribersRoleID": "991000363408719953",
+      "words": [
+         "dick",
+         "pussy",
+         "2 inch",
+         "pump",
+         "chump"
+      ]
+   },
+   "logLevel": "debug",
+   "development": false
+}
