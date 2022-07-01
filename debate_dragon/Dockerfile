@@ -2,6 +2,7 @@ FROM node:16.15.0 AS build
 
 WORKDIR /app
 COPY package*.json ./
+RUN npm install -g npm@8.13.2
 RUN npm install --verbose
 
 COPY ./src ./src
@@ -16,6 +17,7 @@ FROM node:16.15.0-alpine AS production
 WORKDIR /app
 
 COPY package*.json ./
+RUN npm install -g npm@8.13.2
 RUN npm install --omit=dev --verbose
 
 COPY --from=build ./app/build ./build
