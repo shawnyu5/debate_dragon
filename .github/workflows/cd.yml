@@ -35,6 +35,6 @@ jobs:
               script: |
                  cd discord_bots/debate_dragon
                  git pull -f
-                 docker compose build
-                 docker compose up -d
-                 docker image prune -f
+                 # docker compose build
+                 # docker compose up -d
+                 # docker image prune -f
