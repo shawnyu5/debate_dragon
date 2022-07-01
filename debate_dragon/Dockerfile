@@ -2,7 +2,7 @@ FROM node:16.15.0 AS build
 
 WORKDIR /app
 COPY package*.json ./
-RUN npm ci --verbose
+RUN npm install --verbose
 
 COPY ./src ./src
 # COPY ./media ./media
@@ -16,7 +16,7 @@ FROM node:16.15.0-alpine AS production
 WORKDIR /app
 
 COPY package*.json ./
-RUN npm ci --omit=dev --verbose
+RUN npm install --omit=dev --verbose
 
 COPY --from=build ./app/build ./build
 COPY ./config.json ./
