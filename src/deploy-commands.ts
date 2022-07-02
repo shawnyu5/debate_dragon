@@ -75,11 +75,6 @@ class OnStart {
                `Started refreshing application (/) commands for ${guild.name}`
             );
 
-            if (guild.name == "Ogi's server") {
-               logger.info("Skipping Ogi's server");
-               return;
-            }
-
             if (!global) {
                await rest.put(
                   Routes.applicationGuildCommands(clientID, guild.id),
