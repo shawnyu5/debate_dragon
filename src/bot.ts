@@ -1,4 +1,4 @@
-import { Client, Collection, Intents, Interaction } from "discord.js";
+import { Client, Collection, Guild, Intents, Interaction } from "discord.js";
 require("dotenv").config();
 import fs from "fs";
 import { OnStart } from "./deploy-commands";
@@ -34,19 +34,14 @@ for (const file of commandFiles) {
    // With the key as the command name and the value as the exported module
    client.commands.set(command.default?.data.name, command);
 }
-// const command = require(`${__dirname}/commands/debate_dragon.js`);
-// client.commands.set(command.default.data.name, command);
-
-// const command2 = require(`${__dirname}/commands/help.js`);
-// client.commands.set(command2.default.data.name, command2);
 
 let onStart = new OnStart();
 let db = new QuickDB();
-client.on("ready", () => {
+client.on("ready", (client: Client) => {
    logger.info(`${client.user?.tag} logged in`);
-   client.guilds.cache.forEach((guild) => {
+   client.guilds.cache.forEach(async (guild) => {
+      await onStart.deleteRegisteredCommands(config.clientID, guild);
       onStart.readAllGuildCommands();
-      // onStart.deleteRegisteredCommands(config.clientID, guild);
       onStart.registerCommands(
          config.clientID,
          guild,
@@ -146,4 +141,11 @@ client.on("guildCreate", function (guild) {
    );
 });
 
+client.on("destroy", function (guild: Guild) {
+   onStart.deleteRegisteredCommands(config.clientID, guild);
+});
+
+// process.on("exit", () => {
+// onStart.deleteRegisteredCommands(config.clientID);
+// });
 client.login(config.token);

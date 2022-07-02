@@ -102,10 +102,10 @@ class OnStart {
     * @param clientID - ClientID
     * @param guild - Guild object
     */
-   deleteRegisteredCommands(clientID: string, guild: Guild) {
+   async deleteRegisteredCommands(clientID: string, guild: Guild) {
       logger.info("Deleting slash commands for " + guild.name);
       const rest = new REST({ version: "9" }).setToken(token);
-      rest
+      await rest
          .get(Routes.applicationGuildCommands(clientID, guild.id))
          .then((data: any) => {
             const promises = [];
