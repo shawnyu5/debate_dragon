@@ -75,7 +75,7 @@ class OnStart {
                `Started refreshing application (/) commands for ${guild.name}`
             );
 
-            if (guild.name == "Ogi") {
+            if (guild.name == "Ogi's server") {
                logger.info("Skipping Ogi's server");
                return;
             }
