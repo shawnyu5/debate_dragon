@@ -39,6 +39,7 @@ let onStart = new OnStart();
 let db = new QuickDB();
 client.on("ready", (client: Client) => {
    logger.info(`${client.user?.tag} logged in`);
+   // TODO: loop over all the guilds on exit to delete the slash commands from them
    client.guilds.cache.forEach(async (guild) => {
       await onStart.deleteRegisteredCommands(config.clientID, guild);
       onStart.readAllGuildCommands();
