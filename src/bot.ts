@@ -39,13 +39,13 @@ let onStart = new OnStart();
 let db = new QuickDB();
 client.on("ready", (client: Client) => {
    logger.info(`${client.user?.tag} logged in`);
+
    // TODO: loop over all the guilds on exit to delete the slash commands from them
    client.guilds.cache.forEach(async (guild) => {
-      if (guild.name == "Ogi's server") {
+      if (guild.name === "Ogi's server") {
          logger.info("Skipping Ogi's server");
          return;
       }
-
       await onStart.deleteRegisteredCommands(config.clientID, guild);
       onStart.readAllGuildCommands();
       onStart.registerCommands(
@@ -54,6 +54,29 @@ client.on("ready", (client: Client) => {
          onStart.guildCommands,
          false
       );
+   });
+
+   process.on("SIGINT", () => {
+      client.guilds.cache.forEach(async (guild) => {
+         try {
+            await onStart.deleteRegisteredCommands(config.clientID, guild);
+         } catch (e) {
+            logger.error(`No slash command for guild ${guild.name}`);
+            // exit process
+            process.exit(1);
+         }
+      });
+   });
+   process.on("exit", () => {
+      client.guilds.cache.forEach(async (guild) => {
+         try {
+            await onStart.deleteRegisteredCommands(config.clientID, guild);
+         } catch (e) {
+            logger.error(`No slash command for guild ${guild.name}`);
+            // exit process
+            process.exit(1);
+         }
+      });
    });
 });
 
