@@ -83,22 +83,22 @@ export async function resetCounter(message: Message) {
  * Send notifications to the users in config.json about carmen's ramblings
  * @param client - discord client to send the message too
  */
-export async function sendNotification(client: Client) {
+export async function sendNotification(client: Client, messageObj: Message) {
    const config: IConfig = require("../../config.json");
    const dbLastNotificationLabel = "carmen last notification time";
    // const notificationUsers = config.carmenRambles.subscribers;
    const currentTime = new Date();
 
-   const channelToSend = getChannelById(client, config.carmenRambles.channelId);
-   logger.debug(`channel to send name: ${channelToSend?.name}`);
+   // const channelToSend = getChannelById(client, config.carmenRambles.channelId);
+   // logger.debug(`channel to send name: ${messageObj.channel.id}`);
 
    // if not channel found, then its a config error most likely
-   if (!channelToSend) {
-      logger.error(
-         "Please specify the channel to send notifications in config.json"
-      );
-      return;
-   }
+   // if (!channelToSend) {
+   // logger.error(
+   // "Please specify the channel to send notifications in config.json"
+   // );
+   // return;
+   // }
    // get the last notification time from db
    const lastNotificationTime: Date | null = new Date(
       (await db.get(dbLastNotificationLabel)) as string
@@ -129,7 +129,7 @@ export async function sendNotification(client: Client) {
    // set current notification time
    await db.set(dbLastNotificationLabel, currentTime);
    let message = constructNotification(config.carmenRambles.subscribersRoleID);
-   channelToSend.send(message);
+   messageObj.channel.send(message);
    logger.info(
       `Sent notification to ${config.carmenRambles.subscribersRoleID}`
    );

@@ -134,7 +134,7 @@ client.on("messageCreate", async (message) => {
       ((await db.get(dbCounterLabel)) as number) >
       config.carmenRambles.messageLimit
    ) {
-      carmen.sendNotification(client);
+      carmen.sendNotification(client, message);
       // reset counter
       db.set(dbCounterLabel, 0);
       // set last message creation time to current time
