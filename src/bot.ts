@@ -46,7 +46,7 @@ client.on("ready", (client: Client) => {
          logger.info("Skipping Ogi's server");
          return;
       }
-      await onStart.deleteRegisteredCommands(config.clientID, guild);
+      // await onStart.deleteRegisteredCommands(config.clientID, guild);
       onStart.readAllGuildCommands();
       onStart.registerCommands(
          config.clientID,

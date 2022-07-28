@@ -25,6 +25,7 @@ export default {
          "Replied with dragon picture and user message: " + userMessage
       );
       await textOverlay(userMessage);
+
       await interaction.editReply({
          files: ["media/img/done.png"],
       });

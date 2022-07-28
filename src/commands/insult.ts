@@ -15,10 +15,14 @@ export default {
                "The person you tag may be butthurt. Use at your own risk"
             )
             .setRequired(true)
-      ),
-
+      )
+      .addBooleanOption((option) => {
+         return option
+            .setName("anonymous")
+            .setDescription("send the insult anonymously");
+      }),
    execute: async function (interaction: CommandInteraction) {
-      await interaction.deferReply();
+      // await interaction.deferReply();
       let author = interaction.options.getUser("user")?.id;
       // if I am being insulted, don't
       if (author == "652511543845453855") {
@@ -32,7 +36,12 @@ export default {
       } catch (e) {
          insult = "fuck you";
       }
-      await interaction.editReply(`<@${author}> ${insult}`);
+      const anonymous = interaction.options.getBoolean("anonymous");
+      if (anonymous) {
+         await interaction.channel?.send(`<@${author}> ${insult}`);
+      } else {
+         await interaction.reply(`<@${author}> ${insult}`);
+      }
    },
    help: {
       name: "insult",
