@@ -59,7 +59,7 @@ client.on("ready", (client: Client) => {
    process.on("SIGINT", () => {
       client.guilds.cache.forEach(async (guild) => {
          try {
-            await onStart.deleteRegisteredCommands(config.clientID, guild);
+            // await onStart.deleteRegisteredCommands(config.clientID, guild);
          } catch (e) {
             logger.error(`No slash command for guild ${guild.name}`);
             // exit process
@@ -70,7 +70,7 @@ client.on("ready", (client: Client) => {
    process.on("exit", () => {
       client.guilds.cache.forEach(async (guild) => {
          try {
-            await onStart.deleteRegisteredCommands(config.clientID, guild);
+            // await onStart.deleteRegisteredCommands(config.clientID, guild);
          } catch (e) {
             logger.error(`No slash command for guild ${guild.name}`);
             // exit process
