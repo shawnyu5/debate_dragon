@@ -31,11 +31,14 @@ export default {
          author = String(interaction.user.id);
       }
       let insult: string;
+
       try {
          insult = await getInsult();
       } catch (e) {
          insult = "fuck you";
+         logger.debug("Using fall back insult");
       }
+
       const anonymous = interaction.options.getBoolean("anonymous");
       if (anonymous) {
          await interaction.channel?.send(`<@${author}> ${insult}`);

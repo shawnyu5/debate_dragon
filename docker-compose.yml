@@ -1,5 +1,4 @@
-version: "3"
 services:
    debate_dragon:
       build: ./
-      network_mode: "host"
+      # network_mode: "host"

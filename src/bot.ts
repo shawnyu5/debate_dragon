@@ -171,7 +171,7 @@ client.on("guildCreate", function (guild) {
 });
 
 client.on("destroy", function (guild: Guild) {
-   onStart.deleteRegisteredCommands(config.clientID, guild);
+   // onStart.deleteRegisteredCommands(config.clientID, guild);
 });
 
 // process.on("exit", () => {
