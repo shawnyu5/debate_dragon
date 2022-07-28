@@ -93,6 +93,9 @@ class OnStart {
             );
          } catch (error) {
             logger.error(error);
+            logger.error(
+               `Failed to reload application (/) commands for ${guild.name}`
+            );
          }
       })();
    }
