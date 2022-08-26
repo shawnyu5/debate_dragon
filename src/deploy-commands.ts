@@ -68,13 +68,12 @@ class OnStart {
       commands: any,
       global: boolean
    ): void {
-      const rest = new REST({ version: "9" }).setToken(token);
+      const rest = new REST({ version: "10" }).setToken(token);
       (async () => {
          try {
             logger.info(
                `Started refreshing application (/) commands for ${guild.name}`
             );
-
             if (!global) {
                await rest.put(
                   Routes.applicationGuildCommands(clientID, guild.id),
