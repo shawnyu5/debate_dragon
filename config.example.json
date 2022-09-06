@@ -1,6 +1,41 @@
 {
+   // discord bot token
    "token": "",
+   // development discord bot token
+   "token_dev": "",
+   // client id
    "clientID": "",
+   // guild id
    "guildID": "",
-   "carmenSubscribers": []
+   // settings for carmen rambles
+   "carmenRambles": {
+      "channelId": "",
+      // id of caramen
+      "carmenId": "",
+      // the guild id to track of carmen messages
+      "guildID": "",
+      "messageLimit": 2,
+      // the role id to ping when carmen rambles
+      "subscribersRoleID": "",
+      // cool down in minutes
+      "coolDown": 60
+   },
+   "subForJohn": {
+      "johnID": "",
+      "notificationChannelId": "940065144745132103",
+      "guildID": "704149356101500999",
+      "cooldown": 10,
+      "subscribersRoleID": "991000363408719953",
+      "words": [
+         "dick",
+         "pussy",
+         "2 inch",
+         "pump",
+         "chump"
+      ]
+   },
+   // log level
+   "logLevel": "debug",
+   // development
+   "development": true
 }
