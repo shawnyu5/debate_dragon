@@ -170,7 +170,7 @@ client.on("interactionCreate", async (interaction: any) => {
    }
 });
 
-client.on("guildCreate", function (guild) {
+client.on("guildCreate", function(guild) {
    onStart.readAllGuildCommands();
    // onStart.readGlobalCommands();
    onStart.registerCommands(
@@ -189,4 +189,10 @@ client.on("guildCreate", function (guild) {
 // onStart.deleteRegisteredCommands(config.clientID);
 // });
 
-client.login(config.token);
+if (config.development) {
+   client.login(config.token_dev);
+
+}
+else {
+   client.login(config.token);
+}
