@@ -1,16 +1,8 @@
-import {
-   Client,
-   Collection,
-   CommandInteraction,
-   Guild,
-   Intents,
-   Interaction,
-} from "discord.js";
+import { Client, Collection, Intents } from "discord.js";
 require("dotenv").config();
 import fs from "fs";
 import { OnStart } from "./deploy-commands";
 import config from "../config.json";
-import { QuickDB } from "quick.db";
 import logger from "./logger";
 import * as carmen from "./commands/subToCarmen";
 import { GatewayIntentBits } from "discord-api-types";
@@ -55,7 +47,6 @@ for (const file of commandFiles) {
 }
 
 let onStart = new OnStart();
-let db = new QuickDB();
 client.on("ready", (client: Client) => {
    logger.info(`${client.user?.tag} logged in`);
 
@@ -104,52 +95,58 @@ client.on("messageCreate", async (message) => {
    }
 
    logger.info("Carmen message: " + message.content);
-   // 10 messages within 5 minutes will trigger a notification
-   const dbMessageTimeStamp = "Carmen message time stamp";
-   const dbCounterLabel = "Carmen message counter";
+   const realm = await carmen.getRealm();
+   const db: Realm.Results<carmen.IRealm> = realm.objects(
+      carmen.dbLabel.dbName
+   );
+
    const messageCreationTime = message.createdAt;
-   const previousMessageTime: Date = new Date(
-      (await db.get(dbMessageTimeStamp)) as string
+   const previousNotificationTime: Date = new Date(
+      db[0].previousNotificationTimeStamp
    );
 
    // if no previous message, set counter to 0
-   if (!previousMessageTime) {
-      await db.set(dbCounterLabel, 0);
-      await db.set(dbMessageTimeStamp, messageCreationTime);
+   if (!previousNotificationTime) {
+      realm.write(() => {
+         realm.create(carmen.dbLabel.dbName, {
+            notificationTimeStamp: messageCreationTime.toString(),
+            counter: 0,
+         });
+      });
       return;
    }
 
-   // calculate the time difference between current message and previous message
+   // calculate the time difference between current carmen message and previous message
    let timeDifference =
-      messageCreationTime.getMinutes() - previousMessageTime.getMinutes();
+      messageCreationTime.getMinutes() - previousNotificationTime.getMinutes();
 
    // if time difference is within 5 minutes, increment counter
    if (timeDifference < 5) {
-      let counter: number = (await db.get(dbCounterLabel)) as number;
-      await db.set(dbCounterLabel, counter + 1);
+      let counter: number = db[0].counter as number;
+      realm.write(() => {
+         db.update(carmen.dbLabel.counter, counter + 1);
+      });
       logger.info(`Counter updated: ${counter + 1}`);
    } else {
       // if time difference is greater than 5 mins, reset counter and last message creation time
       logger.info(`Counter reset. Time difference: ${timeDifference}`);
-      db.set(dbCounterLabel, 0);
-      db.set(dbMessageTimeStamp, messageCreationTime);
+      carmen.resetDBFields();
       return;
    }
 
    // update the last message creation time in db
-   db.set(dbMessageTimeStamp, messageCreationTime);
+   realm.write(() => {
+      db.update(
+         carmen.dbLabel.previousNotificationTimeStamp,
+         messageCreationTime.toString()
+      );
+   });
 
-   logger.debug("Counter from db: " + (await db.get(dbCounterLabel)));
+   logger.debug("Counter from db: " + db[0].counter);
    // if counter from db is greater than message limit, send notification
-   if (
-      ((await db.get(dbCounterLabel)) as number) >
-      config.carmenRambles.messageLimit
-   ) {
-      carmen.sendNotification(client, message);
-      // reset counter
-      db.set(dbCounterLabel, 0);
-      // set last message creation time to current time
-      db.set(dbMessageTimeStamp, messageCreationTime);
+   if (db[0].counter > config.carmenRambles.messageLimit) {
+      carmen.sendNotification(message);
+      carmen.resetDBFields();
    }
 });
 
