@@ -140,6 +140,7 @@ export async function sendNotification(client: Client, messageObj: Message) {
  * @returns message to send to the users
  */
 function constructNotification(roleID: string): string {
-   let message = `<@&${roleID}> carmen is Rambling now!!!`;
+   const config: IConfig = require("../../config.json");
+   let message = `<@${config.carmenRambles.carmenId}> stfu, #CancelCaramel`;
    return message;
 }
