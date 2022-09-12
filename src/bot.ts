@@ -14,6 +14,7 @@ import { QuickDB } from "quick.db";
 import logger from "./logger";
 import * as carmen from "./commands/subToCarmen";
 import { GatewayIntentBits } from "discord-api-types";
+import { join } from "node:path";
 
 declare module "discord.js" {
    export interface Client {
@@ -31,38 +32,38 @@ const client = new Client({
 
 client.commands = new Collection();
 
+// read all .js command files in the commands folder
 const commandFiles = fs
    .readdirSync(__dirname + "/commands")
    .filter((file: string) => file.endsWith(".js"));
 
-// for (const file of commandFiles) {
-// const command = require(`${__dirname}/commands/global/${file}`);
-// commands.push(command.data.toJSON());
-// }
+// the path to the command folder
+const commandsPath = join(__dirname, "commands");
+let commands: any = [];
 
 for (const file of commandFiles) {
-   const command = require(`./commands/${file}`);
+   const filePath = join(commandsPath, file);
+   const command = require(filePath);
+   commands.push(command.default.data.toJSON());
+}
+
+for (const file of commandFiles) {
+   const command = require(`${__dirname}/commands/${file}`);
    // Set a new item in the Collection
    // With the key as the command name and the value as the exported module
-   client.commands.set(command.default?.data.name, command);
+   client.commands.set(command.default.data.name, command);
 }
 
 let onStart = new OnStart();
 let db = new QuickDB();
 client.on("ready", (client: Client) => {
    logger.info(`${client.user?.tag} logged in`);
-});
 
-// TODO: loop over all the guilds on exit to delete the slash commands from them
-client.guilds.cache.forEach(async (guild) => {
-   // await onStart.deleteRegisteredCommands(config.clientID, guild);
-   onStart.readAllGuildCommands();
-   onStart.registerCommands(
-      config.clientID,
-      guild,
-      onStart.guildCommands,
-      false
-   );
+   client.guilds.cache.forEach(async (guild) => {
+      // await onStart.deleteRegisteredCommands(config.clientID, guild); // TODO: fix delete commands. Refer to the discord guide
+      // onStart.readAllGuildCommands();
+      await onStart.registerCommands(config.clientID, guild, commands);
+   });
 });
 
 // process.on("SIGINT", () => {
@@ -102,10 +103,10 @@ client.on("messageCreate", async (message) => {
       return;
    }
 
-   logger.info("carmen message: " + message.content);
+   logger.info("Carmen message: " + message.content);
    // 10 messages within 5 minutes will trigger a notification
-   const dbMessageTimeStamp = "carmen message time stamp";
-   const dbCounterLabel = "carmen message counter";
+   const dbMessageTimeStamp = "Carmen message time stamp";
+   const dbCounterLabel = "Carmen message counter";
    const messageCreationTime = message.createdAt;
    const previousMessageTime: Date = new Date(
       (await db.get(dbMessageTimeStamp)) as string
@@ -170,15 +171,10 @@ client.on("interactionCreate", async (interaction: any) => {
    }
 });
 
-client.on("guildCreate", function(guild) {
+client.on("guildCreate", async function (guild) {
    onStart.readAllGuildCommands();
    // onStart.readGlobalCommands();
-   onStart.registerCommands(
-      config.clientID,
-      guild,
-      onStart.guildCommands,
-      false
-   );
+   await onStart.registerCommands(config.clientID, guild, commands);
 });
 
 // client.on("destroy", function (guild: Guild) {
@@ -191,8 +187,6 @@ client.on("guildCreate", function(guild) {
 
 if (config.development) {
    client.login(config.token_dev);
-
-}
-else {
+} else {
    client.login(config.token);
 }
