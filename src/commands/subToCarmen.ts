@@ -1,12 +1,10 @@
 import { SlashCommandBuilder } from "@discordjs/builders";
-import { Client, CommandInteraction, Message } from "discord.js";
-import { msToMins, getChannelById } from "../utils";
-import { QuickDB } from "quick.db";
-import { IConfig } from "../types/config";
+import { CommandInteraction, Message } from "discord.js";
+import { msToMins } from "../utils";
 import logger from "../logger";
 import ICommand from "../types/command";
-
-const db = new QuickDB();
+import config from "../../config.json";
+import Realm from "realm";
 
 export default {
    data: new SlashCommandBuilder()
@@ -22,7 +20,6 @@ export default {
    execute: async function (interaction: CommandInteraction) {
       await interaction.deferReply();
 
-      const config: IConfig = require("../../config.json");
       const carmenRole = config.carmenRambles.subscribersRoleID;
 
       let subscriptionToggle = interaction.options.get("subscription")
@@ -56,52 +53,83 @@ export default {
    },
 } as ICommand;
 
+// time stamp the previous notification was sent
+// previousNotificationTimeStamp: "string",
+// // time stamp the previous carmen message was sent
+// previousMessageTimeStamp: "string",
+// // message counter
+// counter: "int",
+export enum dbLabel {
+   // name of the database
+   dbName = "Carmen subs",
+   previousMessageCreationTime = "previousNotificationTimeStamp",
+   previousNotificationTimeStamp = "previousNotificationTimeStamp",
+   counter = "counter",
+}
+
+/**
+ * Interface for the data in realm db
+ */
+export interface IRealm {
+   // time stamp the previous notification was sent
+   previousNotificationTimeStamp: string;
+   // time stamp the previous carmen message was sent
+   previousMessageTimeStamp: string;
+   // message counter
+   counter: number;
+}
+
 /**
  * if 30 mins has passed since the last carmen message, reset the last notification time to now
  * @param message - message object
  */
 export async function resetCounter(message: Message) {
-   const dbMessageCreationTime = "carmenMessageTimeStamp";
-   const dbCounterLabel = "carmenCounter";
+   const realm = await getRealm();
+
+   const db: Realm.Results<IRealm> = realm.objects(dbLabel.dbName);
+
+   // if there are currently nothing in db, create with default values
+   if (db.length === 0) {
+      realm.write(() => {
+         realm.create(dbLabel.dbName, {
+            previousNotificationTimeStamp: new Date().toString(),
+            previousMessageTimeStamp: new Date().toString(),
+            counter: 0,
+         });
+      });
+   }
    const lastMessageTime: Date | null = new Date(
-      (await db.get(dbMessageCreationTime)) as string
+      db[0].previousMessageTimeStamp
    );
    const currentMessageTime = message.createdAt;
 
+   // time difference between current message and the last message sent
    let timeDifference =
       currentMessageTime.getTime() - lastMessageTime.getTime();
+
    timeDifference = msToMins(timeDifference);
+   // if more than 30 mins has passed from the last message, reset message time stamp and counter
    if (timeDifference > 30) {
-      await db.set(dbMessageCreationTime, currentMessageTime);
-      await db.set(dbCounterLabel, 0);
+      resetDBFields();
       logger.info(
-         `Reset carmen counter. More than 30 mins has passed since last message`
+         `Reset caramel counter. More than 30 mins has passed since last message`
       );
    }
 }
 /**
  * Send notifications to the users in config.json about carmen's ramblings
- * @param client - discord client to send the message too
+ * @param messageObj - message object
  */
-export async function sendNotification(client: Client, messageObj: Message) {
-   const config: IConfig = require("../../config.json");
-   const dbLastNotificationLabel = "carmen last notification time";
-   // const notificationUsers = config.carmenRambles.subscribers;
+export async function sendNotification(messageObj: Message) {
+   const realm = await getRealm();
+
+   const db: Realm.Results<IRealm> = realm.objects(dbLabel.dbName);
+
    const currentTime = new Date();
 
-   // const channelToSend = getChannelById(client, config.carmenRambles.channelId);
-   // logger.debug(`channel to send name: ${messageObj.channel.id}`);
-
-   // if not channel found, then its a config error most likely
-   // if (!channelToSend) {
-   // logger.error(
-   // "Please specify the channel to send notifications in config.json"
-   // );
-   // return;
-   // }
    // get the last notification time from db
    const lastNotificationTime: Date | null = new Date(
-      (await db.get(dbLastNotificationLabel)) as string
+      db[0].previousNotificationTimeStamp as string
    );
    logger.debug(`last notification time: ${lastNotificationTime}`);
 
@@ -117,7 +145,9 @@ export async function sendNotification(client: Client, messageObj: Message) {
       config.development == false
    ) {
       // this means carmen is still rambling, so don't keep notifying user of this
-      await db.set(dbLastNotificationLabel, currentTime);
+      realm.write(() => {
+         db[0].previousNotificationTimeStamp = currentTime.toString();
+      });
       logger.info(
          `Less than 60 mins has passed since last notification, doing nothing. Time passed: ${timeDifference} minutes`
       );
@@ -127,19 +157,57 @@ export async function sendNotification(client: Client, messageObj: Message) {
       return;
    }
    // set current notification time
-   await db.set(dbLastNotificationLabel, currentTime);
-   let message = constructNotification(config.carmenRambles.subscribersRoleID);
+   realm.write(() => {
+      db[0].previousNotificationTimeStamp = currentTime.toString();
+   });
+   let message = constructNotification();
    messageObj.channel.send(message);
    logger.info(
       `Sent notification to ${config.carmenRambles.subscribersRoleID}`
    );
 }
 /**
- * construct a notification message alerting the users about carmen's ramblings
- * @param roleID - role id of the role to notify
+ * construct a notification message telling Caramel to stfu
  * @returns message to send to the users
  */
-function constructNotification(roleID: string): string {
-   let message = `<@&${roleID}> carmen is Rambling now!!!`;
+function constructNotification(): string {
+   let message = `<@${config.carmenRambles.carmenId}> stfu, #CancelCaramel. <@&${config.carmenRambles.subscribersRoleID}>`;
    return message;
+}
+
+/**
+ * Get the realm instance containing caramel ramble information
+ * @returns A realm instance containing Caramel rambles information
+ */
+export async function getRealm(): Promise<Realm> {
+   const schema = {
+      name: "Carmen subs",
+      properties: {
+         // time stamp the previous notification was sent
+         previousNotificationTimeStamp: "string",
+         // time stamp the previous carmen message was sent
+         previousMessageTimeStamp: "string",
+         // message counter
+         counter: "int",
+      },
+   };
+
+   const realm = await Realm.open({
+      schema: [schema],
+   });
+
+   return realm;
+}
+
+/**
+ * Reset fields in data base. `counter` to 0, `notificationTimeStamp` to current time
+ */
+export async function resetDBFields() {
+   const realm = await getRealm();
+   const db: Realm.Results<IRealm> = realm.objects(dbLabel.dbName);
+   realm.write(() => {
+      db[0].counter = 0;
+      db[0].previousNotificationTimeStamp = new Date().toString();
+      db[0].previousMessageTimeStamp = new Date().toString();
+   });
 }

@@ -1,6 +1,6 @@
 import { REST } from "@discordjs/rest";
 import { Routes } from "discord-api-types/v9";
-import { Guild } from "discord.js";
+import { Collection, Guild } from "discord.js";
 // @ts-ignore
 import { clientID, guildID, token } from "../config.json";
 import fs from "fs";
@@ -60,41 +60,29 @@ class OnStart {
     * @param clientID - ClientID
     * @param guild - Guild object
     * @param commands - array of commands
-    * @param global - whether to register commands globally or not
     */
-   registerCommands(
+   async registerCommands(
       clientID: string,
       guild: Guild,
-      commands: any,
-      global: boolean
-   ): void {
+      commands: Collection<unknown, any>
+   ): Promise<void> {
       const rest = new REST({ version: "10" }).setToken(token);
       (async () => {
          try {
-            logger.info(
-               `Started refreshing application (/) commands for ${guild.name}`
+            console.log(
+               `Started refreshing application (/) commands for ${guild.name}.`
             );
-            if (!global) {
-               await rest.put(
-                  Routes.applicationGuildCommands(clientID, guild.id),
-                  {
-                     body: commands,
-                  }
-               );
-            } else {
-               await rest.put(Routes.applicationCommands(clientID), {
-                  body: commands,
-               });
-            }
 
-            logger.info(
-               `Successfully reloaded application (/) commands for ${guild.name}`
+            await rest.put(
+               Routes.applicationGuildCommands(clientID, guild.id),
+               { body: commands }
+            );
+
+            console.log(
+               `Finished refreshing application (/) commands for ${guild.name}.`
             );
          } catch (error) {
-            logger.error(error);
-            logger.error(
-               `Failed to reload application (/) commands for ${guild.name}`
-            );
+            console.error(error);
          }
       })();
    }
@@ -106,7 +94,7 @@ class OnStart {
     */
    async deleteRegisteredCommands(clientID: string, guild: Guild) {
       logger.info("Deleting slash commands for " + guild.name);
-      const rest = new REST({ version: "9" }).setToken(token);
+      const rest = new REST({ version: "10" }).setToken(token);
       await rest
          .get(Routes.applicationGuildCommands(clientID, guild.id))
          .then((data: any) => {

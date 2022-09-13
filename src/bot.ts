@@ -1,19 +1,12 @@
-import {
-   Client,
-   Collection,
-   CommandInteraction,
-   Guild,
-   Intents,
-   Interaction,
-} from "discord.js";
+import { Client, Collection, Intents } from "discord.js";
 require("dotenv").config();
 import fs from "fs";
 import { OnStart } from "./deploy-commands";
 import config from "../config.json";
-import { QuickDB } from "quick.db";
 import logger from "./logger";
 import * as carmen from "./commands/subToCarmen";
 import { GatewayIntentBits } from "discord-api-types";
+import { join } from "node:path";
 
 declare module "discord.js" {
    export interface Client {
@@ -31,38 +24,37 @@ const client = new Client({
 
 client.commands = new Collection();
 
+// read all .js command files in the commands folder
 const commandFiles = fs
    .readdirSync(__dirname + "/commands")
    .filter((file: string) => file.endsWith(".js"));
 
-// for (const file of commandFiles) {
-// const command = require(`${__dirname}/commands/global/${file}`);
-// commands.push(command.data.toJSON());
-// }
+// the path to the command folder
+const commandsPath = join(__dirname, "commands");
+let commands: any = [];
 
 for (const file of commandFiles) {
-   const command = require(`./commands/${file}`);
+   const filePath = join(commandsPath, file);
+   const command = require(filePath);
+   commands.push(command.default.data.toJSON());
+}
+
+for (const file of commandFiles) {
+   const command = require(`${__dirname}/commands/${file}`);
    // Set a new item in the Collection
    // With the key as the command name and the value as the exported module
-   client.commands.set(command.default?.data.name, command);
+   client.commands.set(command.default.data.name, command);
 }
 
 let onStart = new OnStart();
-let db = new QuickDB();
 client.on("ready", (client: Client) => {
    logger.info(`${client.user?.tag} logged in`);
-});
 
-// TODO: loop over all the guilds on exit to delete the slash commands from them
-client.guilds.cache.forEach(async (guild) => {
-   // await onStart.deleteRegisteredCommands(config.clientID, guild);
-   onStart.readAllGuildCommands();
-   onStart.registerCommands(
-      config.clientID,
-      guild,
-      onStart.guildCommands,
-      false
-   );
+   client.guilds.cache.forEach(async (guild) => {
+      // await onStart.deleteRegisteredCommands(config.clientID, guild); // TODO: fix delete commands. Refer to the discord guide
+      // onStart.readAllGuildCommands();
+      await onStart.registerCommands(config.clientID, guild, commands);
+   });
 });
 
 // process.on("SIGINT", () => {
@@ -102,53 +94,59 @@ client.on("messageCreate", async (message) => {
       return;
    }
 
-   logger.info("carmen message: " + message.content);
-   // 10 messages within 5 minutes will trigger a notification
-   const dbMessageTimeStamp = "carmen message time stamp";
-   const dbCounterLabel = "carmen message counter";
+   logger.info("Carmen message: " + message.content);
+   const realm = await carmen.getRealm();
+   const db: Realm.Results<carmen.IRealm> = realm.objects(
+      carmen.dbLabel.dbName
+   );
+
    const messageCreationTime = message.createdAt;
-   const previousMessageTime: Date = new Date(
-      (await db.get(dbMessageTimeStamp)) as string
+   const previousNotificationTime: Date = new Date(
+      db[0].previousNotificationTimeStamp
    );
 
    // if no previous message, set counter to 0
-   if (!previousMessageTime) {
-      await db.set(dbCounterLabel, 0);
-      await db.set(dbMessageTimeStamp, messageCreationTime);
+   if (!previousNotificationTime) {
+      realm.write(() => {
+         realm.create(carmen.dbLabel.dbName, {
+            notificationTimeStamp: messageCreationTime.toString(),
+            counter: 0,
+         });
+      });
       return;
    }
 
-   // calculate the time difference between current message and previous message
+   // calculate the time difference between current carmen message and previous message
    let timeDifference =
-      messageCreationTime.getMinutes() - previousMessageTime.getMinutes();
+      messageCreationTime.getMinutes() - previousNotificationTime.getMinutes();
 
    // if time difference is within 5 minutes, increment counter
    if (timeDifference < 5) {
-      let counter: number = (await db.get(dbCounterLabel)) as number;
-      await db.set(dbCounterLabel, counter + 1);
+      let counter: number = db[0].counter as number;
+      realm.write(() => {
+         db.update(carmen.dbLabel.counter, counter + 1);
+      });
       logger.info(`Counter updated: ${counter + 1}`);
    } else {
       // if time difference is greater than 5 mins, reset counter and last message creation time
       logger.info(`Counter reset. Time difference: ${timeDifference}`);
-      db.set(dbCounterLabel, 0);
-      db.set(dbMessageTimeStamp, messageCreationTime);
+      carmen.resetDBFields();
       return;
    }
 
    // update the last message creation time in db
-   db.set(dbMessageTimeStamp, messageCreationTime);
+   realm.write(() => {
+      db.update(
+         carmen.dbLabel.previousNotificationTimeStamp,
+         messageCreationTime.toString()
+      );
+   });
 
-   logger.debug("Counter from db: " + (await db.get(dbCounterLabel)));
+   logger.debug("Counter from db: " + db[0].counter);
    // if counter from db is greater than message limit, send notification
-   if (
-      ((await db.get(dbCounterLabel)) as number) >
-      config.carmenRambles.messageLimit
-   ) {
-      carmen.sendNotification(client, message);
-      // reset counter
-      db.set(dbCounterLabel, 0);
-      // set last message creation time to current time
-      db.set(dbMessageTimeStamp, messageCreationTime);
+   if (db[0].counter > config.carmenRambles.messageLimit) {
+      carmen.sendNotification(message);
+      carmen.resetDBFields();
    }
 });
 
@@ -170,15 +168,10 @@ client.on("interactionCreate", async (interaction: any) => {
    }
 });
 
-client.on("guildCreate", function(guild) {
+client.on("guildCreate", async function (guild) {
    onStart.readAllGuildCommands();
    // onStart.readGlobalCommands();
-   onStart.registerCommands(
-      config.clientID,
-      guild,
-      onStart.guildCommands,
-      false
-   );
+   await onStart.registerCommands(config.clientID, guild, commands);
 });
 
 // client.on("destroy", function (guild: Guild) {
@@ -191,8 +184,6 @@ client.on("guildCreate", function(guild) {
 
 if (config.development) {
    client.login(config.token_dev);
-
-}
-else {
+} else {
    client.login(config.token);
 }
