@@ -171,7 +171,7 @@ export async function sendNotification(messageObj: Message) {
  * @returns message to send to the users
  */
 function constructNotification(): string {
-   let message = `<@${config.carmenRambles.carmenId}> stfu, #CancelCaramel`;
+   let message = `<@${config.carmenRambles.carmenId}> stfu, #CancelCaramel. Oh and <@&${config.carmenRambles.subscribersRoleID}>`;
    return message;
 }
 
